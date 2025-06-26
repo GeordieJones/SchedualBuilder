@@ -1,6 +1,22 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 
+class Day:
+    def __init__(self,name, day, start, end):
+        self.name = name
+        self.day = day
+        self.start = start
+        self.end = end
+    def __str__(self):
+        times = ['8','9','10','11','12','1','2','3','4','5']
+        ret = ''
+        for i in times:
+            if int(times[i]) == self.start or int(times[i]) == self.end:
+                ret+= f"{times[i]}: {self.name}\n"
+            else:
+                ret += f"{times[i]}\n"
+        return (f"{self.day}:\n {ret}")
+
 class Course:
     def __init__(self, name, days, sameTime, start, end):
         self.name = name
