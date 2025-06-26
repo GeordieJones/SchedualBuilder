@@ -1,4 +1,5 @@
-
+import tkinter as tk
+from tkinter import simpledialog, messagebox
 
 class Course:
     def __init__(self, name, days, sameTime, start, end):
