@@ -48,11 +48,13 @@ class App:
             if day is None:
                 continue
             days = day.split()
+            # create a class for each day
             
             sameTime_input = simpledialog.askstring("Same Time?", f"Is {class_name} at the same time each day? (yes/no)")
             if sameTime_input is None:
                 continue
             sameTime = sameTime_input.strip().lower() == "yes"
+            # add a function if no how many differnt times and what are the new times
             
             start = simpledialog.askstring("Start Time", f"When does {class_name} start?")
             if start is None:
