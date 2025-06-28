@@ -11,6 +11,7 @@ class Course:
         return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\n"
 
 class Day:
+    days_of_week = ['m', 't', 'w', 'th', 'f', 'sat','san']
     def __init__(self,name, day, start, end):
         self.name = name
         self.day = day
@@ -25,6 +26,13 @@ class Day:
             else:
                 ret += f"{times[i]}\n"
         return (f"{self.day}:\n {ret}")
+
+def convert_to_days(course):
+    name = course.name
+    days = course.days
+    start = course.start
+    end = course.end
+    # need to change this to add courses to the given days
 
 
 inputed_classes = input('Classes:')
@@ -47,6 +55,10 @@ for i in range(len(classes)):
     end  = input('what does this class end: ')
     c1 = Course(classes[i], days, start, end)
     all_course.append(c1)
+
+for course in all_course:
+    convert_to_days(all_course[course])
+
 
 for course in all_course:
     print(course)
