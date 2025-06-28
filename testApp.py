@@ -66,6 +66,7 @@ class App:
             days = day.split()
             # create a class for each day
             
+            
             sameTime_input = simpledialog.askstring("Same Time?", f"Is {class_name} at the same time each day? (yes/no)")
             if sameTime_input is None:
                 continue
