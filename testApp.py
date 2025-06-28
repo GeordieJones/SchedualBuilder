@@ -72,7 +72,8 @@ class App:
                 continue
             sameTime = sameTime_input.strip().lower() == "yes"
             # add a function if no how many differnt times and what are the new times
-            
+            if sameTime != 'yes':
+                numoftimes = simpledialog.askstring("number of different Times", f"What times?")
             start = simpledialog.askstring("Start Time", f"When does {class_name} start?")
             if start is None:
                 continue
