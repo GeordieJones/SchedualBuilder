@@ -31,7 +31,7 @@ inputed_classes = input('Classes:')
 classes = inputed_classes.split()
 all_course = []
 for i in range(len(classes)):
-    day = input(f'what day do you have {classes[i]}: ')
+    day = input(f'what days do you have {classes[i]}: ')
     days = day.split()
     sameTime = (input('is this class at the same time each day: ').strip().lower() == 'yes')
     if not sameTime:
@@ -47,6 +47,5 @@ for i in range(len(classes)):
     c1 = Course(classes[i], days, start, end)
     all_course.append(c1)
 
-for i in all_course:
-    for course in all_course:
-        print(course)
+for course in all_course:
+    print(course)
