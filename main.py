@@ -2,10 +2,9 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 
 class Course:
-    def __init__(self, name, days, sameTime, start, end):
+    def __init__(self, name, days, start, end):
         self.name = name
         self.days = days
-        self.sameTime = sameTime
         self.start = start
         self.end = end
     def __str__(self):
@@ -28,19 +27,25 @@ class Day:
         return (f"{self.day}:\n {ret}")
 
 
-
 inputed_classes = input('Classes:')
 classes = inputed_classes.split()
 all_course = []
 for i in range(len(classes)):
     day = input(f'what day do you have {classes[i]}: ')
     days = day.split()
-    sameTime = bool(input('is this class at the same time each day: '))
+    sameTime = (input('is this class at the same time each day: ').strip().lower() == 'yes')
+    if not sameTime:
+        numOfTimes = int(input('how many different times: '))
+        for times in range(numOfTimes):
+            start = input(f'when does this class start on day {times+1}: ')
+            end  = input(f'when does this class end on day {times+1}: ')
+            c1  = Course(classes[i],[days[times]], start, end)
+            all_course.append(c1)
+        continue
     start = input('when does this class start: ')
     end  = input('what does this class end: ')
-    c1 = Course(classes[i], days, sameTime, start, end)
+    c1 = Course(classes[i], days, start, end)
     all_course.append(c1)
-
 
 for i in all_course:
     for course in all_course:
