@@ -11,6 +11,21 @@ class Course:
     def __str__(self):
         return f"{self.name}:\n\tDays: {self.days}\n\tsame time? {self.sameTime}\n\tStart: {self.start}\n\tEnd: {self.end}\n\n"
 
+class Day:
+    def __init__(self,name, day, start, end):
+        self.name = name
+        self.day = day
+        self.start = start
+        self.end = end
+    def __str__(self):
+        times = ['8','9','10','11','12','1','2','3','4','5']
+        ret = ''
+        for i in times:
+            if int(times[i]) == self.start or int(times[i]) == self.end:
+                ret+= f"{times[i]}: {self.name}\n"
+            else:
+                ret += f"{times[i]}\n"
+        return (f"{self.day}:\n {ret}")
 
 
 
