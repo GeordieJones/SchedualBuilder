@@ -36,7 +36,7 @@ for i in range(len(classes)):
     sameTime = (input('is this class at the same time each day: ').strip().lower() == 'yes')
     if not sameTime:
         numOfTimes = int(input('how many different times: '))
-        for times in range(numOfTimes):
+        for times in range(len(days)):
             start = input(f'when does this class start on day {times+1}: ')
             end  = input(f'when does this class end on day {times+1}: ')
             c1  = Course(classes[i],[days[times]], start, end)
