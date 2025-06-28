@@ -8,7 +8,7 @@ class Course:
         self.start = start
         self.end = end
     def __str__(self):
-        return f"{self.name}:\n\tDays: {self.days}\n\tsame time? {self.sameTime}\n\tStart: {self.start}\n\tEnd: {self.end}\n\n"
+        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\n"
 
 class Day:
     def __init__(self,name, day, start, end):
