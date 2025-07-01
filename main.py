@@ -60,3 +60,14 @@ classsDays = convert_to_days(all_course)
 
 for course in all_course:
     print(course)
+
+def ask_day():
+    requested_day = input("Which day do you want to see classes for (m, t, w, th, f)? ").strip().lower()
+    week_schedule = {day.name: day for day in classsDays}
+    if requested_day in week_schedule:
+        print(week_schedule[requested_day])
+    else:
+        print("Invalid day.")
+
+while(True):
+    ask_day()
