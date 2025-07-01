@@ -12,28 +12,18 @@ class Course:
 
 class Day:
     days_of_week = ['m', 't', 'w', 'th', 'f', 'sat','san']
-    def __init__(self,days, course):
-        self.days = days
-        self.course = course
-
+    def __init__(self, name):
+        self.name = name
+        self.courses = []
+    def add_course(self, course):
+        self.courses.append(course)
     def __str__(self):
-        times = ['8','9','10','11','12','1','2','3','4','5']
-        ret = ''
-        for i in times:
-            if int(times[i]) == self.start or int(times[i]) == self.end:
-                ret+= f"{times[i]}: {self.name}\n"
-            else:
-                ret += f"{times[i]}\n"
-        return (f"{self.day}:\n {ret}")
-
-def convert_to_days(course):
-    name = course.name
-    days = course.days
-    dayClass = []
-    
-
-
-
+        if not self.courses:
+            return f"{self.name}: No classes\n"
+        ret = f"{self.name}:\n"
+        for course in self.courses:
+            ret += f"  {course.name} ({course.start}–{course.end})\n"
+        return ret
 
 inputed_classes = input('Classes:')
 classes = inputed_classes.split()
@@ -44,7 +34,7 @@ for i in range(len(classes)):
     sameTime = (input('is this class at the same time each day: ').strip().lower() == 'yes')
     if not sameTime:
         numOfTimes = int(input('how many differnt times: '))
-        for times in range(numOfTimes+1):
+        for times in range(numOfTimes):
             start = input(f'when does this class start: ')
             end  = input(f'when does this class end: ')
             same = input('what days have this time: ').split()
