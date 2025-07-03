@@ -1,5 +1,16 @@
-import tkinter as tk
-from tkinter import simpledialog, messagebox
+'''
+Discription:
+this is the work horse behind the calender program it takes
+the inputs and outputs through the classes and day class
+
+TO DO:
+* need to make a ui interface for the runner preferably a different file that runs this
+* create an optimizer for study times
+* class difficulty rating for classes
+* make it a list for a day like the calender app
+* add times to work in free time and other activites
+* use marginal benifit and cost analisys
+'''
 
 class Course:
     def __init__(self, name, days, start, end):
