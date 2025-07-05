@@ -21,12 +21,23 @@ class Course:
     def __init__(self, name, days, start, end, meridian):
         self.name = name
         self.days = days
-        self.start = start
-        self.end = end
+        self.start = self.normalize_time(start)
+        self.end = self.normalize_time(end)
         self.meridian = meridian
 
     def time_range(self):
         return f"{self.start}–{self.end} {self.meridian}"
+
+    def normalize_time(self, t):
+        """Converts '9' to '9:00' and ensures all times are in 'H:MM' format."""
+        if ':' not in t:
+            return f"{int(t)}:00"
+        parts = t.split(':')
+        if len(parts) == 2:
+            hour = int(parts[0])
+            minute = parts[1].zfill(2)
+            return f"{hour}:{minute}"
+        raise ValueError(f"Invalid time format: {t}")
     
     def sort_key(self):
         hour, minute = map(int, self.start.split(":"))
