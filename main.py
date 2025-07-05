@@ -106,8 +106,19 @@ def show_data(class_days):
     table.setColumnCount(2)
     table.setHorizontalHeaderLabels(['Day', 'Schedule'])
 
+    day_name_map = {
+        'm': 'Monday',
+        't': 'Tuesday',
+        'w': 'Wednesday',
+        'th': 'Thursday',
+        'f': 'Friday',
+        'sat': 'Saturday',
+        'sun': 'Sunday'
+    }
+
     for i, day in enumerate(class_days):
-        item_day = QTableWidgetItem(day.name)
+        full_day_name = day_name_map.get(day.name, day.name)
+        item_day = QTableWidgetItem(full_day_name)
 
         if not day.courses:
             class_str = 'No classes'
@@ -121,6 +132,8 @@ def show_data(class_days):
         table.setItem(i, 0, item_day)
         table.setItem(i, 1, item_classes)
     table.resizeColumnsToContents()
+    table.resizeRowsToContents()
+    table.setWordWrap(True)
     table.setWindowTitle('Weekly Class Schedule')
     table.show()
     sys.exit(app.exec())
