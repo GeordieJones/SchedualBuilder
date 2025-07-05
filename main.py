@@ -107,7 +107,7 @@ def show_data(class_days):
     table.setHorizontalHeaderLabels(['Day', 'Schedule'])
 
     for i, day in enumerate(class_days):
-        item_day = QTableWidgetItem(day.name())
+        item_day = QTableWidgetItem(day.name)
 
         if not day.courses:
             class_str = 'No classes'
@@ -134,8 +134,7 @@ def main():
 
     class_days = convert_to_days(all_courses)
 
-    while True:
-        ask_day(class_days)
+    show_data(class_days)
 
 
 if __name__ == "__main__":
