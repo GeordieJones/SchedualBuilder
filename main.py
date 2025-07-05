@@ -58,17 +58,23 @@ class Day:
     def __init__(self, name):
         self.name = name
         self.courses = []
+        self.study_times = []
 
     def add_course(self, course):
         self.courses.append(course)
         self.courses.sort(key=lambda c: c.sort_key())
+    
+    def add_study_time(self, time_desc):
+        self.study_times.append(time_desc)
 
     def __str__(self):
-        if not self.courses:
-            return f"{self.name}: No classes\n"
+        if not self.courses and not self.study_times:
+            return f"{self.name}: No classes or study sessions\n"
         ret = f"{self.name}:\n"
         for course in self.courses:
-            ret += f"  {course.name} ({course.start}–{course.end}{course.meridian})\n"
+            ret += f"  {course.name} ({course.start}–{course.end} {course.meridian})\n"
+        for study in self.study_times:
+            ret += f"  Study: {study}\n"
         return ret
 
 
@@ -131,8 +137,8 @@ def show_data(class_days):
     app = QApplication([])
     table = QTableWidget()
     table.setRowCount(len(class_days))
-    table.setColumnCount(2)
-    table.setHorizontalHeaderLabels(['Day', 'Schedule'])
+    table.setColumnCount(4)
+    table.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes','Study Times'])
 
     day_name_map = {
         'm': 'Monday',
@@ -149,16 +155,42 @@ def show_data(class_days):
         item_day = QTableWidgetItem(full_day_name)
 
         if not day.courses:
-            class_str = 'No classes'
+            classes_str = 'No classes'
         else:
-            class_str = '\n'.join([f'{course.name} ({course.time_range()})'for course in day.courses])
-        
-        item_classes = QTableWidgetItem(class_str)
+            classes_str = '\n'.join(f'{c.name} ({c.time_range()})' for c in day.courses)
+
+        # Build study times string
+        if not day.study_times:
+            study_str = 'No study sessions'
+        else:
+            study_str = '\n'.join(day.study_times)
+
+        # Build combined schedule string
+        combined_list = []
+        if day.courses:
+            combined_list.extend(f'{c.name} ({c.time_range()})' for c in day.courses)
+        if day.study_times:
+            combined_list.extend(f'Study: {s}' for s in day.study_times)
+        if not combined_list:
+            combined_list = ['No classes or study sessions']
+        combined_str = '\n'.join(combined_list)
+
+        item_schedule = QTableWidgetItem(combined_str)
+        item_schedule.setTextAlignment(Qt.AlignTop)
+        item_schedule.setFlags(item_schedule.flags() | Qt.ItemIsEditable)
+
+        item_classes = QTableWidgetItem(classes_str)
         item_classes.setTextAlignment(Qt.AlignTop)
         item_classes.setFlags(item_classes.flags() | Qt.ItemIsEditable)
 
+        item_study = QTableWidgetItem(study_str)
+        item_study.setTextAlignment(Qt.AlignTop)
+        item_study.setFlags(item_study.flags() | Qt.ItemIsEditable)
+
         table.setItem(i, 0, item_day)
-        table.setItem(i, 1, item_classes)
+        table.setItem(i, 1, item_schedule)
+        table.setItem(i, 2, item_classes)
+        table.setItem(i, 3, item_study)
     table.resizeColumnsToContents()
     table.resizeRowsToContents()
     table.setWordWrap(True)
@@ -170,6 +202,14 @@ def show_data(class_days):
     table.show()
     sys.exit(app.exec())
 
+def add_demo_study_times(class_days):
+    # Just an example: add some study times per day
+    for day in class_days:
+        if day.name == 'm':
+            day.add_study_time("2:00–3:00 PM")
+        if day.name == 'w':
+            day.add_study_time("5:00–6:30 PM")
+
 # === Main Entry Point ===
 
 def main():
@@ -180,6 +220,7 @@ def main():
         print(course)
 
     class_days = convert_to_days(all_courses)
+    add_demo_study_times(class_days)
 
     show_data(class_days)
 
