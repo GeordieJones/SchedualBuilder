@@ -18,14 +18,19 @@ from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
 # === Data Classes ===
 
 class Course:
-    def __init__(self, name, days, start, end):
+    def __init__(self, name, days, start, end, meridian):
         self.name = name
         self.days = days
         self.start = start
         self.end = end
+        self.meridian = meridian
+
+    def time_range(self):
+        return f"{self.start}–{self.end} {self.meridian}"
+
 
     def __str__(self):
-        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\n"
+        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\t{self.meridian}\n"
 
 
 class Day:
@@ -43,7 +48,7 @@ class Day:
             return f"{self.name}: No classes\n"
         ret = f"{self.name}:\n"
         for course in self.courses:
-            ret += f"  {course.name} ({course.start}–{course.end})\n"
+            ret += f"  {course.name} ({course.start}–{course.end}{course.meridian})\n"
         return ret
 
 
@@ -65,12 +70,14 @@ def get_classes():
             for _ in range(num_times):
                 start = input(f'When does this class start? ')
                 end = input(f'When does this class end? ')
+                meridian = input(f'AM or PM? ').upper()
                 specific_days = input('What days have this time? ').lower().split()
-                all_courses.append(Course(name, specific_days, start, end))
+                all_courses.append(Course(name, specific_days, start, end, meridian))
         else:
             start = input('When does this class start? ')
             end = input('When does this class end? ')
-            all_courses.append(Course(name, days, start, end))
+            meridian = input(f'AM or PM? ').upper()
+            all_courses.append(Course(name, days, start, end, meridian))
 
     return all_courses
 
@@ -100,6 +107,7 @@ def ask_day(class_days):
         print("Invalid day. Try m, t, w, th, or f.")
 
 
+
 def show_data(class_days):
     app = QApplication([])
     table = QTableWidget()
@@ -124,7 +132,7 @@ def show_data(class_days):
         if not day.courses:
             class_str = 'No classes'
         else:
-            class_str = '\n'.join([f'{course.name} ({course.start}–{course.end})'for course in day.courses])
+            class_str = '\n'.join([f'{course.name} ({course.time_range()})'for course in day.courses])
         
         item_classes = QTableWidgetItem(class_str)
         item_classes.setTextAlignment(Qt.AlignTop)
