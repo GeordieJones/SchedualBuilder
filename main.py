@@ -77,7 +77,8 @@ def get_classes():
 
 def convert_to_days(all_courses):
     """Converts a list of Course objects into Day objects."""
-    day_names = ['m', 't', 'w', 'th', 'f']
+    #day_names = ['m', 't', 'w', 'th', 'f', 'sat', 'sun']
+    day_names = Day.days_of_week
     week = {day: Day(day) for day in day_names}
 
     for course in all_courses:
@@ -90,7 +91,7 @@ def convert_to_days(all_courses):
 
 def ask_day(class_days):
     """Asks for a day and prints the schedule for that day."""
-    requested_day = input("Which day do you want to see classes for (m, t, w, th, f)? ").strip().lower()
+    requested_day = input("Which day do you want to see classes for (m, t, w, th, f, sat, sun)? ").strip().lower()
     week_schedule = {day.name: day for day in class_days}
 
     if requested_day in week_schedule:
