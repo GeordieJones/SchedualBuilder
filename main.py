@@ -106,7 +106,13 @@ def ask_day(class_days):
     else:
         print("Invalid day. Try m, t, w, th, or f.")
 
-
+def sort_key(self):
+    hour, minute = map(int, self.start.split(":"))
+    if self.meridian == 'PM' and hour != 12:
+        hour += 12
+    if self.meridian == 'AM' and hour == 12:
+        hour = 0
+    return hour * 60 + minute
 
 def show_data(class_days):
     app = QApplication([])
