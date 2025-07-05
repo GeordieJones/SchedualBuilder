@@ -162,6 +162,10 @@ def show_data(class_days):
     table.resizeColumnsToContents()
     table.resizeRowsToContents()
     table.setWordWrap(True)
+    table.resize(800, 600)
+    for row in range(table.rowCount()):
+        if table.rowHeight(row) < 50:
+            table.setRowHeight(row, 50)
     table.setWindowTitle('Weekly Class Schedule')
     table.show()
     sys.exit(app.exec())
