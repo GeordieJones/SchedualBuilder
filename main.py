@@ -12,7 +12,7 @@ TO DO:
 * Use marginal benefit and cost analysis.
 """
 import sys
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
 
 # === Data Classes ===
@@ -115,6 +115,8 @@ def show_data(class_days):
             class_str = '\n'.join([f'{course.name} ({course.start}–{course.end})'for course in day.courses])
         
         item_classes = QTableWidgetItem(class_str)
+        item_classes.setTextAlignment(Qt.AlignTop)
+        item_classes.setFlags(item_classes.flags() | Qt.ItemIsEditable)
 
         table.setItem(i, 0, item_day)
         table.setItem(i, 1, item_classes)
