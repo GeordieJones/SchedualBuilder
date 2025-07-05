@@ -11,6 +11,9 @@ TO DO:
 * Add times to work in free time and other activities.
 * Use marginal benefit and cost analysis.
 """
+import sys
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
 
 # === Data Classes ===
 
@@ -95,6 +98,30 @@ def ask_day(class_days):
     else:
         print("Invalid day. Try m, t, w, th, or f.")
 
+
+def show_data(class_days):
+    app = QApplication([])
+    table = QTableWidget()
+    table.setRowCount(len(class_days))
+    table.setColumnCount(2)
+    table.setHorizontalHeaderLabels(['Day', 'Schedule'])
+
+    for i, day in enumerate(class_days):
+        item_day = QTableWidgetItem(day.name())
+
+        if not day.courses:
+            class_str = 'No classes'
+        else:
+            class_str = '\n'.join([f'{course.name} ({course.start}–{course.end})'for course in day.courses])
+        
+        item_classes = QTableWidgetItem(class_str)
+
+        table.setItem(i, 0, item_day)
+        table.setItem(i, 1, item_classes)
+    table.resizeColumnsToContents()
+    table.setWindowTitle('Weekly Class Schedule')
+    table.show()
+    sys.exit(app.exec())
 
 # === Main Entry Point ===
 
