@@ -1,4 +1,6 @@
-from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit)
+from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
+                                QLineEdit, QGridLayout, QSizePolicy)
+from PySide6.QtCore import Qt
 import sys
 import main
 
@@ -7,37 +9,42 @@ class mainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Class Schedule GUI")
-        self.setGeometry(100, 100, 400, 300)
+        self.setGeometry(100, 100, 800, 600)
 
-        layout = QVBoxLayout()
+        layout = QGridLayout()
 
         #classes enter
         self.label1 = QLabel('Class: ')
-        layout.addWidget(self.label1)
         self.input_box1 = QLineEdit()
-        layout.addWidget(self.input_box1)
+        self.input_box1.setMinimumWidth(300)
+        layout.addWidget(self.label1, 0, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box1, 0, 1)
 
         #days enter
         self.label2 = QLabel('Days (m, t, w, th, f): ')
-        layout.addWidget(self.label2)
         self.input_box2 = QLineEdit()
-        layout.addWidget(self.input_box2)
+        layout.addWidget(self.label2, 1, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box2, 1, 1)
 
         #times enter
         self.label3 = QLabel('time (start-finish AM/PM): ')
-        layout.addWidget(self.label3)
         self.input_box3 = QLineEdit()
-        layout.addWidget(self.input_box3)
+        layout.addWidget(self.label3, 2, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box3, 2, 1)
 
 
 
         self.submit_button = QPushButton("Submit class")
+        self.submit_button.setFixedSize(150, 40)
+        layout.addWidget(self.submit_button, 3, 0)
         self.submit_button.clicked.connect(self.process_input)
-        layout.addWidget(self.submit_button)
+
 
         self.finish_button = QPushButton("Finish")
+        self.finish_button.setFixedSize(150, 40)
+        layout.addWidget(self.finish_button, 3, 2)
         self.finish_button.clicked.connect(self.finish)
-        layout.addWidget(self.finish_button)
+
 
         self.setLayout(layout)
 
