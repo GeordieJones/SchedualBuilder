@@ -17,6 +17,9 @@ from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
 
 # === Data Classes ===
 
+all_courses = []
+
+
 class Course:
     def __init__(self, name, days, start, end, meridian):
         self.name = name
@@ -80,32 +83,7 @@ class Day:
 
 # === Core Logic Functions ===
 
-def get_classes():
-    """Gathers user input and returns a list of Course objects."""
-    inputed_classes = input('Enter class names (space-separated): ')
-    class_names = inputed_classes.split()
-    all_courses = []
-
-    for name in class_names:
-        day_input = input(f'What days do you have {name}? ').lower()
-        days = day_input.split()
-        same_time = input('Is this class at the same time each day? (yes/no): ').strip().lower() == 'yes'
-
-        if not same_time:
-            num_times = int(input('How many different times? '))
-            for _ in range(num_times):
-                start = input(f'When does this class start? ')
-                end = input(f'When does this class end? ')
-                meridian = input(f'AM or PM? ').upper()
-                specific_days = input('What days have this time? ').lower().split()
-                all_courses.append(Course(name, specific_days, start, end, meridian))
-        else:
-            start = input('When does this class start? ')
-            end = input('When does this class end? ')
-            meridian = input(f'AM or PM? ').upper()
-            all_courses.append(Course(name, days, start, end, meridian))
-
-    return all_courses
+class_days = [Day(day) for day in Day.days_of_week]
 
 
 def convert_to_days(all_courses):
@@ -133,8 +111,19 @@ def ask_day(class_days):
         print("Invalid day. Try m, t, w, th, or f.")
 
 
+def add_class(name, days, start, end, meridian):
+    global all_courses
+    course = Course(name, days, start, end, meridian)
+    all_courses.append(course)
+    for d in days:
+        for day_obj in class_days:
+            if day_obj.name == d:
+                day_obj.add_course(course)
+
+
+
 def show_data(class_days):
-    app = QApplication([])
+    #app = QApplication([])
     table = QTableWidget()
     table.setRowCount(len(class_days))
     table.setColumnCount(4)
@@ -200,7 +189,7 @@ def show_data(class_days):
             table.setRowHeight(row, 50)
     table.setWindowTitle('Weekly Class Schedule')
     table.show()
-    sys.exit(app.exec())
+    return table
 
 def add_demo_study_times(class_days):
     # Just an example: add some study times per day
@@ -213,16 +202,10 @@ def add_demo_study_times(class_days):
 # === Main Entry Point ===
 
 def main():
-    all_courses = get_classes()
-
-    print("\n--- Courses Entered ---")
-    for course in all_courses:
-        print(course)
-
-    class_days = convert_to_days(all_courses)
+    global class_days
     add_demo_study_times(class_days)
-
     show_data(class_days)
+
 
 
 if __name__ == "__main__":
