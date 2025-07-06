@@ -202,6 +202,16 @@ def add_activity(name, days, start, end, meridian):
             if day_obj.name == d:
                 day_obj.add_activity(activity)
 
+vals = []
+def add_values(start, end, max_val, min_val):
+    val_dict = {
+        'start': start,
+        'end': end,
+        'max': max_val,
+        'min': min_val
+    }
+    vals.append(val_dict)
+
 
 
 def show_data(class_days):
@@ -255,7 +265,8 @@ def show_data(class_days):
 
 
 
-        item_schedule = QTableWidgetItem('\n'.join(combined_list))
+        #item_schedule = QTableWidgetItem('\n'.join(combined_list))
+        item_schedule = QTableWidgetItem(", ".join(map(str, combined_list)))
         item_schedule.setTextAlignment(Qt.AlignTop)
         item_schedule.setFlags(item_schedule.flags() | Qt.ItemIsEditable)
 

@@ -10,12 +10,6 @@ last notes: currently added buttons and classes but now need to add a class diff
             maybe assignments, tests, and projects in-order to give the details needed to build
             the optimizer program
 
-            
-
-            ok I understand the whole function except this part can you explain
-
-items.sort(key=lambda x: x[0])
- return [item[1] for item in items]
 '''
 
 class firstWindow(QWidget):
@@ -104,20 +98,17 @@ class secondWindow(QWidget):
 
         layout = QGridLayout()
 
-        #classes enter
         self.label1 = QLabel('Activity: ')
         self.input_box1 = QLineEdit()
         self.input_box1.setMinimumWidth(300)
         layout.addWidget(self.label1, 0, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.input_box1, 0, 1)
 
-        #days enter
         self.label2 = QLabel('Days (m, t, w, th, f): ')
         self.input_box2 = QLineEdit()
         layout.addWidget(self.label2, 1, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.input_box2, 1, 1)
 
-        #times enter
         self.label3 = QLabel('time (start-finish AM/PM): ')
         self.input_box3 = QLineEdit()
         layout.addWidget(self.label3, 2, 0, alignment=Qt.AlignLeft)
@@ -131,10 +122,10 @@ class secondWindow(QWidget):
         self.submit_button.clicked.connect(self.process_input)
 
 
-        self.finish_button = QPushButton("Finish")
+        self.finish_button = QPushButton("Next page")
         self.finish_button.setFixedSize(150, 40)
         layout.addWidget(self.finish_button, 3, 2)
-        self.finish_button.clicked.connect(self.finish)
+        self.finish_button.clicked.connect(self.next_page)
 
 
         self.setLayout(layout)
@@ -157,6 +148,82 @@ class secondWindow(QWidget):
             self.input_box1.clear()
             self.input_box2.clear()
             self.input_box3.clear()
+
+        except Exception as e:
+                print(f"Error: {e}")
+
+    def next_page(self):
+        self.close()
+        self.activity_window = thirdWindow()
+        self.activity_window.show()
+
+
+
+class thirdWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Class Schedule GUI")
+        self.setGeometry(100, 100, 800, 600)
+
+        layout = QGridLayout()
+
+        #classes enter
+        self.start = QLabel('Time willing to start: ')
+        self.input_box1 = QLineEdit()
+        self.input_box1.setMinimumWidth(300)
+        layout.addWidget(self.start, 0, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box1, 0, 1)
+
+        #days enter
+        self.end = QLabel('Time willing to end: ')
+        self.input_box2 = QLineEdit()
+        layout.addWidget(self.end, 1, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box2, 1, 1)
+
+        #times enter
+        self.max = QLabel('max hours: ')
+        self.input_box3 = QLineEdit()
+        layout.addWidget(self.max, 2, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box3, 2, 1)
+
+        self.min = QLabel('min hours: ')
+        self.input_box4 = QLineEdit()
+        layout.addWidget(self.min, 3, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box4, 3, 1)
+
+
+
+        self.submit_button = QPushButton("Submit hours")
+        self.submit_button.setFixedSize(150, 40)
+        layout.addWidget(self.submit_button, 4, 0)
+        self.submit_button.clicked.connect(self.process_input)
+
+
+        self.finish_button = QPushButton("Finish")
+        self.finish_button.setFixedSize(150, 40)
+        layout.addWidget(self.finish_button, 4, 2)
+        self.finish_button.clicked.connect(self.finish)
+
+
+        self.setLayout(layout)
+
+    def process_input(self):
+        try:
+            start = self.input_box1.text()
+            end = self.input_box2.text().split()
+            max_val = int(self.input_box3.text())
+            min_val = int(self.input_box4.text())
+
+            main.add_values(start, end, max_val, min_val)
+
+            print(f"time: {start} - {end}")
+            print(f"max: {max_val}")
+            print(f"min: {min_val}")
+
+            self.input_box1.clear()
+            self.input_box2.clear()
+            self.input_box3.clear()
+            self.input_box4.clear()
 
         except Exception as e:
                 print(f"Error: {e}")
