@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton)
+from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit)
 import sys
 from main import get_classes, convert_to_days, show_data
 
@@ -10,16 +10,19 @@ class mainWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        self.launch_schedule_button = QPushButton("luanch from termianl logic")
-        self.launch_schedule_button.clicked.connect(self.run_schedule_from_imported_logic)
+        self.label = QLabel('Eneter class: ')
+        layout.addWidget(self.label)
+        self.input_box = QLineEdit()
+        layout.addWidget(self.input_box)
+        self.submit_button = QPushButton("Submit")
+        self.submit_button.clicked.connect(self.process_input)
+        layout.addWidget(self.submit_button)
 
-        layout.addWidget(self.launch_schedule_button)
         self.setLayout(layout)
 
-    def run_schedule_from_imported_logic(self):
-        all_courses = get_classes()
-        class_days = convert_to_days(all_courses)
-        show_data(class_days)
+    def process_input(self):
+        user_input = self.input_box.text()
+        print(f'Input: {user_input}')
 
 
 def main():
