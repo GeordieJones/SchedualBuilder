@@ -190,6 +190,7 @@ def show_data(class_days):
         else:
             classes_str = '\n'.join(f'{c.name} ({c.time_range()})' for c in day.courses)
 
+
         # Build study times string
         if not day.study_times:
             study_str = 'No study sessions'
@@ -199,7 +200,9 @@ def show_data(class_days):
         if not day.activities:
             activity_str = 'No activities'
         else:
-            activity_str = '\n'.join(f'{a.name} ({a.time_range()})' for a in day.activities)
+            activity_str = '\n'.join(f'Activity: {a.name} ({a.time_range()})' for a in day.activities)
+
+
             #before was activity_str = '\n'.join(day.study_times)
 
 
@@ -210,7 +213,7 @@ def show_data(class_days):
         if day.study_times:
             combined_list.extend(f'Study: {s}' for s in day.study_times)
         if day.activities:
-            combined_list.extend(f'{ac.name} ({ac.time_range()})' for ac in day.activities)
+            combined_list.extend(f'Activity: {ac.name} ({ac.time_range()})' for ac in day.activities)
         if not combined_list:
             combined_list = ['No classes or study sessions']
         combined_str = '\n'.join(combined_list)
