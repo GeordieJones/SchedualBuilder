@@ -63,6 +63,7 @@ class Day:
         self.name = name
         self.courses = []
         self.study_times = []
+        self.activities = []
 
     def add_course(self, course):
         self.courses.append(course)
@@ -70,6 +71,10 @@ class Day:
     
     def add_study_time(self, time_desc):
         self.study_times.append(time_desc)
+
+    def add_activity(self, activity):
+        self.activities.append(activity)
+        self.activities.sort(key=lambda c: c.sort_key())
 
     def __str__(self):
         if not self.courses and not self.study_times:
@@ -80,6 +85,42 @@ class Day:
         for study in self.study_times:
             ret += f"  Study: {study}\n"
         return ret
+
+class Activity:
+    def __init__(self, name, days, start, end, meridian):
+        self.name = name
+        self.days = days
+        self.start = self.normalize_time(start)
+        self.end = self.normalize_time(end)
+        self.meridian = meridian
+
+    def time_range(self):
+        return f"{self.start}–{self.end} {self.meridian}"
+
+    def normalize_time(self, t):
+        """Converts '9' to '9:00' and ensures all times are in 'H:MM' format."""
+        if ':' not in t:
+            return f"{int(t)}:00"
+        parts = t.split(':')
+        if len(parts) == 2:
+            hour = int(parts[0])
+            minute = parts[1].zfill(2)
+            return f"{hour}:{minute}"
+        raise ValueError(f"Invalid time format: {t}")
+    
+    def sort_key(self):
+        hour, minute = map(int, self.start.split(":"))
+        if self.meridian == 'PM' and hour != 12:
+            hour += 12
+        if self.meridian == 'AM' and hour == 12:
+            hour = 0
+        return hour * 60 + minute
+
+
+    def __str__(self):
+        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\t{self.meridian}\n\n"
+
+
 
 
 # === Core Logic Functions ===
@@ -127,8 +168,8 @@ def show_data(class_days):
     #app = QApplication([])
     table = QTableWidget()
     table.setRowCount(len(class_days))
-    table.setColumnCount(4)
-    table.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes','Study Times'])
+    table.setColumnCount(5)
+    table.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes', 'Activities','Study Times'])
 
     day_name_map = {
         'm': 'Monday',
@@ -155,12 +196,21 @@ def show_data(class_days):
         else:
             study_str = '\n'.join(day.study_times)
 
+        if not day.activities:
+            activity_str = 'No activities'
+        else:
+            activity_str = '\n'.join(f'{a.name} ({a.time_range()})' for a in day.activities)
+            #before was activity_str = '\n'.join(day.study_times)
+
+
         # Build combined schedule string
         combined_list = []
         if day.courses:
             combined_list.extend(f'{c.name} ({c.time_range()})' for c in day.courses)
         if day.study_times:
             combined_list.extend(f'Study: {s}' for s in day.study_times)
+        if day.activities:
+            combined_list.extend(f'{ac.name} ({ac.time_range()})' for ac in day.activities)
         if not combined_list:
             combined_list = ['No classes or study sessions']
         combined_str = '\n'.join(combined_list)
@@ -173,6 +223,10 @@ def show_data(class_days):
         item_classes.setTextAlignment(Qt.AlignTop)
         item_classes.setFlags(item_classes.flags() | Qt.ItemIsEditable)
 
+        item_activity = QTableWidgetItem(activity_str)
+        item_activity.setTextAlignment(Qt.AlignTop)
+        item_activity.setFlags(item_activity.flags() | Qt.ItemIsEditable)
+
         item_study = QTableWidgetItem(study_str)
         item_study.setTextAlignment(Qt.AlignTop)
         item_study.setFlags(item_study.flags() | Qt.ItemIsEditable)
@@ -180,7 +234,8 @@ def show_data(class_days):
         table.setItem(i, 0, item_day)
         table.setItem(i, 1, item_schedule)
         table.setItem(i, 2, item_classes)
-        table.setItem(i, 3, item_study)
+        table.setItem(i, 3, item_activity)
+        table.setItem(i, 4, item_study)
     table.resizeColumnsToContents()
     table.resizeRowsToContents()
     table.setWordWrap(True)

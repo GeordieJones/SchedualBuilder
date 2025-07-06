@@ -80,6 +80,7 @@ class mainWindow(QWidget):
             self.input_box1.clear()
             self.input_box2.clear()
             self.input_box3.clear()
+            self.input_box4.clear()
 
         except Exception as e:
                 print(f"Error: {e}")
@@ -88,6 +89,7 @@ class mainWindow(QWidget):
         self.input_box1.setDisabled(True)
         self.input_box2.setDisabled(True)
         self.input_box3.setDisabled(True)
+        self.input_box4.setDisabled(True)
         self.submit_button.setDisabled(True)
         self.finish_button.setDisabled(True)
 
