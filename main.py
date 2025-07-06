@@ -21,12 +21,13 @@ all_courses = []
 
 
 class Course:
-    def __init__(self, name, days, start, end, meridian):
+    def __init__(self, name, days, start, end, meridian, difficulty):
         self.name = name
         self.days = days
         self.start = self.normalize_time(start)
         self.end = self.normalize_time(end)
         self.meridian = meridian
+        self.difficulty = difficulty
 
     def time_range(self):
         return f"{self.start}–{self.end} {self.meridian}"
@@ -52,7 +53,7 @@ class Course:
 
 
     def __str__(self):
-        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\t{self.meridian}\n"
+        return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\t{self.meridian}\n\tDifficulty: {self.difficulty}\n"
 
 
 class Day:
@@ -111,9 +112,9 @@ def ask_day(class_days):
         print("Invalid day. Try m, t, w, th, or f.")
 
 
-def add_class(name, days, start, end, meridian):
+def add_class(name, days, start, end, meridian, difficulty):
     global all_courses
-    course = Course(name, days, start, end, meridian)
+    course = Course(name, days, start, end, meridian, difficulty)
     all_courses.append(course)
     for d in days:
         for day_obj in class_days:

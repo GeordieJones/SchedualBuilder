@@ -39,17 +39,22 @@ class mainWindow(QWidget):
         layout.addWidget(self.label3, 2, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.input_box3, 2, 1)
 
+        self.label4 = QLabel('difficulty of class: ')
+        self.input_box4 = QLineEdit()
+        layout.addWidget(self.label4, 3, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box4, 3, 1)
+
 
 
         self.submit_button = QPushButton("Submit class")
         self.submit_button.setFixedSize(150, 40)
-        layout.addWidget(self.submit_button, 3, 0)
+        layout.addWidget(self.submit_button, 4, 0)
         self.submit_button.clicked.connect(self.process_input)
 
 
         self.finish_button = QPushButton("Finish")
         self.finish_button.setFixedSize(150, 40)
-        layout.addWidget(self.finish_button, 3, 2)
+        layout.addWidget(self.finish_button, 4, 2)
         self.finish_button.clicked.connect(self.finish)
 
 
@@ -60,15 +65,17 @@ class mainWindow(QWidget):
             class_name = self.input_box1.text()
             days = self.input_box2.text().split()
             time_range = self.input_box3.text()
+            diff = int(self.input_box4.text())
 
             time_string, period = time_range.split()
             start, end = time_string.split('-')
 
-            main.add_class(class_name, days, start, end, period)
+            main.add_class(class_name, days, start, end, period,diff)
 
             print(f"Class: {class_name}")
             print(f"Days: {days}")
             print(f"Time: {start}-{end} {period}")
+            print(f"Diff: {diff}")
 
             self.input_box1.clear()
             self.input_box2.clear()
