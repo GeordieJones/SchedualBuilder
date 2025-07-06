@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
 # === Data Classes ===
 
 all_courses = []
+all_activities = []
 
 
 class Course:
@@ -127,6 +128,36 @@ class Activity:
 
 class_days = [Day(day) for day in Day.days_of_week]
 
+def get_all_sorted_items(day):
+    items = []
+
+    # Wrap all items with common structure
+    for course in day.courses:
+        items.append((course.sort_key(), f'{course.name} ({course.time_range()})'))
+
+    for activity in day.activities:
+        items.append((activity.sort_key(), f'Activity: {activity.name} ({activity.time_range()})'))
+
+    for study_str in day.study_times:
+        # Attempt to extract sort key from study_str like '2:00–3:00 PM'
+        try:
+            time_part, meridian = study_str.split(" ")
+            start_time = time_part.split("–")[0]
+            hour, minute = map(int, start_time.split(":"))
+            if meridian == 'PM' and hour != 12:
+                hour += 12
+            if meridian == 'AM' and hour == 12:
+                hour = 0
+            key = hour * 60 + minute
+        except:
+            key = 9999  # Fallback sort key if format is wrong
+        items.append((key, f'Study: {study_str}'))
+
+    # Sort by time
+    items.sort(key=lambda x: x[0])
+    return [item[1] for item in items]
+
+
 
 def convert_to_days(all_courses):
     """Converts a list of Course objects into Day objects."""
@@ -161,6 +192,15 @@ def add_class(name, days, start, end, meridian, difficulty):
         for day_obj in class_days:
             if day_obj.name == d:
                 day_obj.add_course(course)
+
+def add_activity(name, days, start, end, meridian):
+    global all_activities
+    activity = Activity(name, days, start, end, meridian)
+    all_activities.append(activity)
+    for d in days:
+        for day_obj in class_days:
+            if day_obj.name == d:
+                day_obj.add_activity(activity)
 
 
 
@@ -207,18 +247,15 @@ def show_data(class_days):
 
 
         # Build combined schedule string
-        combined_list = []
-        if day.courses:
-            combined_list.extend(f'{c.name} ({c.time_range()})' for c in day.courses)
-        if day.study_times:
-            combined_list.extend(f'Study: {s}' for s in day.study_times)
-        if day.activities:
-            combined_list.extend(f'Activity: {ac.name} ({ac.time_range()})' for ac in day.activities)
-        if not combined_list:
-            combined_list = ['No classes or study sessions']
-        combined_str = '\n'.join(combined_list)
 
-        item_schedule = QTableWidgetItem(combined_str)
+        combined_list = get_all_sorted_items(day)
+        if not combined_list:
+            combined_list = ['No classes, activities, or study sessions']
+        
+
+
+
+        item_schedule = QTableWidgetItem('\n'.join(combined_list))
         item_schedule.setTextAlignment(Qt.AlignTop)
         item_schedule.setFlags(item_schedule.flags() | Qt.ItemIsEditable)
 
