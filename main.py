@@ -133,7 +133,7 @@ def get_all_sorted_items(day):
 
     # Wrap all items with common structure
     for course in day.courses:
-        items.append((course.sort_key(), f'{course.name} ({course.time_range()})'))
+        items.append((course.sort_key(), f'Class: {course.name} ({course.time_range()})'))
 
     for activity in day.activities:
         items.append((activity.sort_key(), f'Activity: {activity.name} ({activity.time_range()})'))
@@ -238,7 +238,7 @@ def show_data(class_days):
         if not day.courses:
             classes_str = 'No classes'
         else:
-            classes_str = '\n'.join(f'{c.name} ({c.time_range()})' for c in day.courses)
+            classes_str = '\n'.join(f' {c.name} ({c.time_range()})' for c in day.courses)
 
 
         # Build study times string
@@ -250,7 +250,7 @@ def show_data(class_days):
         if not day.activities:
             activity_str = 'No activities'
         else:
-            activity_str = '\n'.join(f'Activity: {a.name} ({a.time_range()})' for a in day.activities)
+            activity_str = '\n'.join(f'{a.name} ({a.time_range()})' for a in day.activities)
 
 
             #before was activity_str = '\n'.join(day.study_times)
@@ -265,8 +265,7 @@ def show_data(class_days):
 
 
 
-        #item_schedule = QTableWidgetItem('\n'.join(combined_list))
-        item_schedule = QTableWidgetItem(", ".join(map(str, combined_list)))
+        item_schedule = QTableWidgetItem('\n'.join(combined_list))
         item_schedule.setTextAlignment(Qt.AlignTop)
         item_schedule.setFlags(item_schedule.flags() | Qt.ItemIsEditable)
 
