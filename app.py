@@ -4,6 +4,13 @@ from PySide6.QtCore import Qt
 import sys
 import main
 
+'''
+
+last notes: currently added buttons and classes but now need to add a class difficulty and
+            maybe assignments, tests, and projects in-order to give the details needed to build
+            the optimizer program
+
+'''
 
 class mainWindow(QWidget):
     def __init__(self):
