@@ -210,7 +210,7 @@ class thirdWindow(QWidget):
     def process_input(self):
         try:
             start = self.input_box1.text()
-            end = self.input_box2.text().split()
+            end = self.input_box2.text()
             max_val = int(self.input_box3.text())
             min_val = int(self.input_box4.text())
 

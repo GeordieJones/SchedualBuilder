@@ -152,6 +152,9 @@ class Study:
         if self.meridian == 'AM' and hour == 12:
             hour = 0
         return hour * 60 + minute
+    def __str__(self):
+        return f"{self.name} ({self.time_range()})"
+
 
 
 
@@ -228,21 +231,28 @@ def add_study(name, days, start, end, meridian):
     all_studies.append(study)
     for d in days:
         for day_obj in class_days:
+            print(f"Looking to match {d} with {[d.name for d in class_days]}")
             if day_obj.name == d:
                 day_obj.add_study_time(study)
+                print(f"Added study session: {name} on {days} from {start} to {end} {meridian}")
+
 
 vals = {}
-def add_values(start, end, max_val, min_val):
-        vals['start'] = start
-        vals['end'] = end
-        vals['max'] = max_val
-        vals['min'] = min_val
+def add_values(start_time, end_time, max_val, min_val):
+    vals['start'] = (start_time, 'AM')
+    vals['end'] = (end_time, 'PM')
+    vals['max'] = max_val
+    vals['min'] = min_val
 
 def extract_meridian(time_str):
     return time_str.split(" ")[-1]
 
 
 def show_data(class_days):
+    optimizer.optimize(class_days, vals)
+    for day in class_days:
+        print(f"{day.name} has {len(day.study_times)} study sessions.")
+
     #app = QApplication([])
     table = QTableWidget()
     table.setRowCount(len(class_days))
@@ -258,19 +268,9 @@ def show_data(class_days):
         'sat': 'Saturday',
         'sun': 'Sunday'
     }
-    optimized_study = optimizer.optimize(class_days, vals)
     for i, day in enumerate(class_days):
         full_day_name = day_name_map.get(day.name, day.name)
         item_day = QTableWidgetItem(full_day_name)
-
-        study_blocks = optimized_study[i]
-
-        for start_str, end_str in study_blocks:
-            meridian = extract_meridian(start_str)  # "AM" or "PM"
-            start_time = start_str.split()[0]       # "3:00"
-            end_time = end_str.split()[0]           # "4:00"
-            study = Study("Study", [day.name], start_time, end_time, meridian)
-            day.add_study_time(study)
 
 
         if not day.courses:
@@ -280,10 +280,11 @@ def show_data(class_days):
 
 
         # Build study times string
-        if not study_blocks:
+        if not day.study_times:
             study_str = 'No study sessions'
         else:
-            study_str = '\n'.join(f'{start} – {end}' for start, end in study_blocks)
+            study_str = '\n'.join(f'{s.name} ({s.time_range()})' for s in day.study_times)
+
 
 
         if not day.activities:
