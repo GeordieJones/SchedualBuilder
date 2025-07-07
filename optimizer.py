@@ -27,8 +27,8 @@ def optimize(combined_list, vals):
     full_blocks = [[]for _ in range(7)]
     start_day = time_to_minutes(vals['start'][0], "am")
     end_day = time_to_minutes(vals['end'][0], "pm")
-    max_study = int((float(vals['max_val'][0])) *60)
-    min_study = int((float(vals['min_val'][0])) *60)
+    max_study = int((float(vals['max'])) *60)
+    min_study = int((float(vals['min'])) *60)
 
     for i, day in enumerate(combined_list):
         study_blocks = []
