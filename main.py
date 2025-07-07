@@ -231,7 +231,6 @@ def add_study(name, days, start, end, meridian):
     all_studies.append(study)
     for d in days:
         for day_obj in class_days:
-            print(f"Looking to match {d} with {[d.name for d in class_days]}")
             if day_obj.name == d:
                 day_obj.add_study_time(study)
                 print(f"Added study session: {name} on {days} from {start} to {end} {meridian}")
