@@ -45,7 +45,7 @@ def optimize(combined_list, vals):
                     end_min = time_to_minutes(entry.end, entry.meridian)
                     if((start_min - open_start) >= 20 and time_studied < max_study):
                         time_studied += ((start_min-TIME_BETWEEN) - open_start)
-                        study_blocks.append((open_start, start_min-TIME_BETWEEN))
+                        study_blocks.append((minutes_to_time(open_start), minutes_to_time(start_min-TIME_BETWEEN)))
                         open_start = end_min + TIME_BETWEEN
                     else:
                         open_start = end_min + TIME_BETWEEN
@@ -56,10 +56,10 @@ def optimize(combined_list, vals):
             remaining_time = end_day - open_start
             if time_studied < max_study and remaining_time >= 30:
                 if time_studied + remaining_time < max_study:
-                    study_blocks.append((open_start, end_day))
+                    study_blocks.append((minutes_to_time(open_start), minutes_to_time(end_day)))
                 else:
                     block_end = open_start + (max_study - time_studied)
-                    study_blocks.append((open_start, block_end))
+                    study_blocks.append((minutes_to_time(open_start), minutes_to_time(block_end)))
 
         full_blocks[i] = study_blocks
     return full_blocks
