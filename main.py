@@ -14,6 +14,7 @@ TO DO:
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
+import optimizer
 
 # === Data Classes ===
 
@@ -202,15 +203,13 @@ def add_activity(name, days, start, end, meridian):
             if day_obj.name == d:
                 day_obj.add_activity(activity)
 
-vals = []
+vals = {}
 def add_values(start, end, max_val, min_val):
-    val_dict = {
-        'start': start,
-        'end': end,
-        'max': max_val,
-        'min': min_val
-    }
-    vals.append(val_dict)
+        vals['start'] = start
+        vals['end'] = end
+        vals['max'] = max_val
+        vals['min'] = min_val
+
 
 
 
@@ -230,7 +229,7 @@ def show_data(class_days):
         'sat': 'Saturday',
         'sun': 'Sunday'
     }
-
+    optimized_study = optimizer.optimize(class_days, vals)
     for i, day in enumerate(class_days):
         full_day_name = day_name_map.get(day.name, day.name)
         item_day = QTableWidgetItem(full_day_name)
@@ -242,10 +241,12 @@ def show_data(class_days):
 
 
         # Build study times string
-        if not day.study_times:
+        study_blocks = optimized_study[i]
+        if not study_blocks:
             study_str = 'No study sessions'
         else:
-            study_str = '\n'.join(day.study_times)
+            study_str = '\n'.join(f'{start} – {end}' for start, end in study_blocks)
+
 
         if not day.activities:
             activity_str = 'No activities'
@@ -262,7 +263,6 @@ def show_data(class_days):
         if not combined_list:
             combined_list = ['No classes, activities, or study sessions']
         
-
 
 
         item_schedule = QTableWidgetItem('\n'.join(combined_list))
