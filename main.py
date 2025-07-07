@@ -234,6 +234,10 @@ def show_data(class_days):
         full_day_name = day_name_map.get(day.name, day.name)
         item_day = QTableWidgetItem(full_day_name)
 
+        study_blocks = optimized_study[i]
+        day.study_times = [f"{start} – {end}" for start, end in study_blocks]
+
+
         if not day.courses:
             classes_str = 'No classes'
         else:
@@ -241,7 +245,6 @@ def show_data(class_days):
 
 
         # Build study times string
-        study_blocks = optimized_study[i]
         if not study_blocks:
             study_str = 'No study sessions'
         else:
@@ -297,19 +300,12 @@ def show_data(class_days):
     table.show()
     return table
 
-def add_demo_study_times(class_days):
-    # Just an example: add some study times per day
-    for day in class_days:
-        if day.name == 'm':
-            day.add_study_time("2:00–3:00 PM")
-        if day.name == 'w':
-            day.add_study_time("5:00–6:30 PM")
+
 
 # === Main Entry Point ===
 
 def main():
     global class_days
-    add_demo_study_times(class_days)
     show_data(class_days)
 
 
