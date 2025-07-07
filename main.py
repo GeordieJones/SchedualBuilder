@@ -20,6 +20,7 @@ import optimizer
 
 all_courses = []
 all_activities = []
+all_studies = []
 
 
 class Course:
@@ -85,7 +86,7 @@ class Day:
         for course in self.courses:
             ret += f"  {course.name} ({course.start}–{course.end} {course.meridian})\n"
         for study in self.study_times:
-            ret += f"  Study: {study}\n"
+            ret += f"  {study.name} ({study.time_range()})\n"
         return ret
 
 class Activity:
@@ -122,6 +123,35 @@ class Activity:
     def __str__(self):
         return f"{self.name}:\n\tDays: {self.days}\n\tStart: {self.start}\n\tEnd: {self.end}\n\t{self.meridian}\n\n"
 
+class Study:
+    def __init__(self, name, days, start, end, meridian):
+        self.name = name
+        self.days = days
+        self.start = self.normalize_time(start)
+        self.end = self.normalize_time(end)
+        self.meridian = meridian
+
+    def time_range(self):
+        return f"{self.start}–{self.end} {self.meridian}"
+
+    def normalize_time(self, t):
+        """Converts '9' to '9:00' and ensures all times are in 'H:MM' format."""
+        if ':' not in t:
+            return f"{int(t)}:00"
+        parts = t.split(':')
+        if len(parts) == 2:
+            hour = int(parts[0])
+            minute = parts[1].zfill(2)
+            return f"{hour}:{minute}"
+        raise ValueError(f"Invalid time format: {t}")
+    
+    def sort_key(self):
+        hour, minute = map(int, self.start.split(":"))
+        if self.meridian == 'PM' and hour != 12:
+            hour += 12
+        if self.meridian == 'AM' and hour == 12:
+            hour = 0
+        return hour * 60 + minute
 
 
 
@@ -139,20 +169,9 @@ def get_all_sorted_items(day):
     for activity in day.activities:
         items.append((activity.sort_key(), f'Activity: {activity.name} ({activity.time_range()})'))
 
-    for study_str in day.study_times:
-        # Attempt to extract sort key from study_str like '2:00–3:00 PM'
-        try:
-            time_part, meridian = study_str.split(" ")
-            start_time = time_part.split("–")[0]
-            hour, minute = map(int, start_time.split(":"))
-            if meridian == 'PM' and hour != 12:
-                hour += 12
-            if meridian == 'AM' and hour == 12:
-                hour = 0
-            key = hour * 60 + minute
-        except:
-            key = 9999  # Fallback sort key if format is wrong
-        items.append((key, f'Study: {study_str}'))
+    for study in day.study_times:
+        items.append((study.sort_key(), f'Study: {study.name} ({study.time_range()})'))
+
 
     # Sort by time
     items.sort(key=lambda x: x[0])
@@ -203,6 +222,15 @@ def add_activity(name, days, start, end, meridian):
             if day_obj.name == d:
                 day_obj.add_activity(activity)
 
+def add_study(name, days, start, end, meridian):
+    global all_studies
+    study = Study(name, days, start, end, meridian)
+    all_studies.append(study)
+    for d in days:
+        for day_obj in class_days:
+            if day_obj.name == d:
+                day_obj.add_study_time(study)
+
 vals = {}
 def add_values(start, end, max_val, min_val):
         vals['start'] = start
@@ -210,7 +238,8 @@ def add_values(start, end, max_val, min_val):
         vals['max'] = max_val
         vals['min'] = min_val
 
-
+def extract_meridian(time_str):
+    return time_str.split(" ")[-1]
 
 
 def show_data(class_days):
@@ -235,7 +264,13 @@ def show_data(class_days):
         item_day = QTableWidgetItem(full_day_name)
 
         study_blocks = optimized_study[i]
-        day.study_times = [f"{start} – {end}" for start, end in study_blocks]
+
+        for start_str, end_str in study_blocks:
+            meridian = extract_meridian(start_str)  # "AM" or "PM"
+            start_time = start_str.split()[0]       # "3:00"
+            end_time = end_str.split()[0]           # "4:00"
+            study = Study("Study", [day.name], start_time, end_time, meridian)
+            day.add_study_time(study)
 
 
         if not day.courses:
