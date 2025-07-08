@@ -110,49 +110,67 @@ def optimize_times(combined_list, vals):
 def schedule_study_sessions(combined_list,vals):
     free_time_slots = available_study_times(combined_list, vals)
     study_allocations = optimize_times(combined_list, vals)
-
     num_days = len(free_time_slots)
-    daily_course_study_times = {}
-
-    for course_name, weekly_time in study_allocations:
-        daily_course_study_times[course_name] = weekly_time / num_days
-
+    
+    # Convert to dict for easier lookup
+    course_weekly_times = dict(study_allocations)
     
     scheduled_sessions = []
+
     for day_index, day_slots in enumerate(free_time_slots):
         day_name = combined_list[day_index].name
-
-        course_study_times = daily_course_study_times.copy()
-
-        for start_str, end_str in day_slots:
-            start_minutes = time_to_minutes(start_str.split()[0], start_str.split()[1])
-            end_minutes = time_to_minutes(end_str.split()[0], end_str.split()[1])
-            slot_duration = end_minutes - start_minutes
-
-            best_course = None
-            best_time_needed = 0
-
-            for course_name, time_needed in course_study_times.items():
-                if time_needed > 0 and slot_duration >= 30:  # min 30 min blocks
-                    if time_needed > best_time_needed:
-                        best_course = course_name
-                        best_time_needed = min(time_needed, slot_duration)
-                    
-
-            if best_course:
-                # Schedule this course for this time slot
-                study_end_minutes = start_minutes + min(best_time_needed, slot_duration)
-                scheduled_sessions.append({
-                    'course': best_course,
-                    'day': day_name,
-                    'start': minutes_to_time(start_minutes),
-                    'end': minutes_to_time(study_end_minutes)
-                })
-                course_study_times[best_course] -= min(best_time_needed, slot_duration)
-                if course_study_times[best_course] <= 0:
-                    del course_study_times[best_course]
-
+        
+        # Calculate daily targets (could be made more sophisticated)
+        daily_targets = {course: weekly_time / num_days 
+                        for course, weekly_time in course_weekly_times.items()}
+        
+        day_sessions = schedule_daily(day_name, day_slots, daily_targets)
+        scheduled_sessions.extend(day_sessions)
+    
     return scheduled_sessions
+
+
+
+def schedule_daily(day_name, time_slots, course_targets):
+    sessions = []
+    remaining = course_targets.copy()
+
+    for start_str, end_str in time_slots:
+        start_minutes = time_to_minutes(start_str.split()[0], start_str.split()[1])
+        end_minutes = time_to_minutes(end_str.split()[0], end_str.split()[1])
+        slot_duration = end_minutes - start_minutes
+
+        best_course = find_best_course_for_slot(remaining, slot_duration)
+
+        if best_course:
+            study_duration = min(remaining[best_course], slot_duration)
+            sessions.append({
+                'course': best_course,
+                'day': day_name,
+                'start': minutes_to_time(start_minutes),
+                'end': minutes_to_time(start_minutes + study_duration)
+            })
+
+            remaining[best_course] -= study_duration
+            if remaining[best_course] <= 0:
+                del remaining[best_course]
+
+    return sessions
+
+def find_best_course_for_slot(targets, slot_duration):
+
+    if slot_duration < 30:  # minimum 30 min blocks
+            return None
+        # Prioritize courses that need the most time
+    valid_courses = {course: time for course, time in targets.items() 
+                        if time > 0}
+    if not valid_courses:
+            return None
+    return max(valid_courses, key=valid_courses.get)
+
+
+
+
 
 
 
