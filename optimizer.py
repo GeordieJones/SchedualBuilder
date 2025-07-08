@@ -1,4 +1,5 @@
 import main
+import random
 
 def time_to_minutes(time_str, period):
     if ":" not in time_str:
@@ -13,6 +14,7 @@ def time_to_minutes(time_str, period):
 
 def minutes_to_time(minutes):
     # FIX: Handle day overflow correctly
+    minutes = int(round(minutes))
     if minutes >= 1440:  # 24 hours
         minutes = minutes % 1440
     
@@ -107,6 +109,8 @@ def optimize_times(combined_list, vals):
     for course in courses_by_difficulty:
         proportion = course.difficulty / total_difficulty_weight
         study_time_for_course = total_time * proportion
+        print(f"[optimize_times] Course '{course.name}': weekly study time = {study_time_for_course:.2f} minutes")
+        
         optimal_times.append((course.name, study_time_for_course))
     
     return optimal_times
@@ -126,7 +130,7 @@ def schedule_study_sessions(combined_list,vals):
         day_name = combined_list[day_index].name
         
         # Calculate daily targets (could be made more sophisticated)
-        daily_targets = {course: weekly_time / num_days 
+        daily_targets = {course: weekly_time / num_days
                         for course, weekly_time in course_weekly_times.items()}
         
         day_sessions = schedule_daily(day_name, day_slots, daily_targets,max_daily_minutes)
@@ -185,17 +189,22 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes):
 
     return sessions
 
+
+
 def find_best_course_for_slot(targets, slot_duration):
-    if slot_duration < 30:  # minimum 30 min blocks
+    if slot_duration < 30:
         return None
-        # Prioritize courses that need the most time
-    valid_courses = {course: time for course, time in targets.items() 
-                        if time > 0}
+    valid_courses = {course: time for course, time in targets.items() if time > 0}
     if not valid_courses:
         return None
-    return max(valid_courses, key=valid_courses.get)
 
+    # Sort courses by remaining time descending
+    sorted_courses = sorted(valid_courses.items(), key=lambda x: x[1], reverse=True)
 
+    # Pick randomly from top N (e.g. top 3) to give smaller courses a chance
+    top_n = min(3, len(sorted_courses))
+    chosen_course = random.choice(sorted_courses[:top_n])[0]
+    return chosen_course
 
 
 
