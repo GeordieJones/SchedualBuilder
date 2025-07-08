@@ -1,6 +1,34 @@
 import main
 import random
 
+class CoursePicker:
+    def __init__(self):
+        self.last_picked = None
+        self.order = []
+
+    def pick_course(self, targets, slot_duration):
+        valid_courses = [course for course, time in targets.items() if time > 0]
+        if not valid_courses:
+            return None
+
+        # Reset order if the set of courses changed
+        if set(valid_courses) != set(self.order):
+            self.order = sorted(valid_courses)  # fixed order (e.g. alphabetical)
+            self.last_picked = None
+
+        if self.last_picked not in self.order:
+            self.last_picked = None
+
+        next_index = 0
+        if self.last_picked:
+            last_index = self.order.index(self.last_picked)
+            next_index = (last_index + 1) % len(self.order)
+
+        course = self.order[next_index]
+        self.last_picked = course
+        return course
+
+
 def time_to_minutes(time_str, period):
     if ":" not in time_str:
         time_str += ":00"  # auto-correct like "8" → "8:00"
@@ -125,6 +153,7 @@ def schedule_study_sessions(combined_list,vals):
     course_weekly_times = dict(study_allocations)
     
     scheduled_sessions = []
+    picker = CoursePicker()
 
     for day_index, day_slots in enumerate(free_time_slots):
         day_name = combined_list[day_index].name
@@ -133,14 +162,14 @@ def schedule_study_sessions(combined_list,vals):
         daily_targets = {course: weekly_time / num_days
                         for course, weekly_time in course_weekly_times.items()}
         
-        day_sessions = schedule_daily(day_name, day_slots, daily_targets,max_daily_minutes)
+        day_sessions = schedule_daily(day_name, day_slots, daily_targets,max_daily_minutes,picker)
         scheduled_sessions.extend(day_sessions)
     
     return scheduled_sessions
 
 
 
-def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes):
+def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes,picker):
     sessions = []
     remaining = course_targets.copy()
     daily_time_used = 0
@@ -161,7 +190,7 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes):
 
 
         while slot_remaining >= 30 and remaining and daily_time_used < max_daily_minutes:
-            best_course = find_best_course_for_slot(remaining, slot_remaining)
+            best_course = picker.pick_course(remaining, slot_remaining)
             
             if not best_course:
                 break
