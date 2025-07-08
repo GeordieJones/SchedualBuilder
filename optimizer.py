@@ -142,20 +142,31 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes):
         available_time = min(slot_duration, max_daily_minutes - daily_time_used)
         if available_time < 30:  # minimum 30 min blocks
             continue
+        
+        current_start = start_minutes
+        slot_remaining = available_time
 
-        best_course = find_best_course_for_slot(remaining, available_time)
 
-        if best_course:
-            study_duration = min(remaining[best_course], available_time)
+        while slot_remaining >= 30 and remaining and daily_time_used < max_daily_minutes:
+            best_course = find_best_course_for_slot(remaining, slot_remaining)
+            
+            if not best_course:
+                break
+                
+            study_duration = min(remaining[best_course], slot_remaining, max_daily_minutes - daily_time_used)
+            
             sessions.append({
                 'course': best_course,
                 'day': day_name,
-                'start': minutes_to_time(start_minutes),
-                'end': minutes_to_time(start_minutes + study_duration)
+                'start': minutes_to_time(current_start),
+                'end': minutes_to_time(current_start + study_duration)
             })
 
             remaining[best_course] -= study_duration
             daily_time_used += study_duration
+            current_start += study_duration
+            slot_remaining -= study_duration
+            
             if remaining[best_course] <= 0:
                 del remaining[best_course]
 
