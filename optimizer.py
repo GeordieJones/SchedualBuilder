@@ -87,11 +87,15 @@ def optimize_times(combined_list, vals):
     """Optimize study time allocation based on course difficulty"""
     free_time_slots = available_study_times(combined_list, vals)
     
-    # Get unique courses and sort by difficulty
-    courses_by_difficulty = sorted(
-        set(course for day in combined_list for course in day.courses),
-        key=lambda c: c.difficulty, reverse=True
-    )
+    all_courses = []
+    seen_names = set()
+    for day in combined_list:
+        for course in day.courses:
+            if course.name not in seen_names:
+                all_courses.append(course)
+                seen_names.add(course.name)
+    
+    courses_by_difficulty = sorted(all_courses, key=lambda c: c.difficulty, reverse=True)
     
     if not courses_by_difficulty:
         return []
@@ -158,8 +162,12 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes):
             if not best_course:
                 break
                 
-            study_duration = min(remaining[best_course], slot_remaining, max_daily_minutes - daily_time_used)
+            max_session_length = min(120, slot_remaining, max_daily_minutes - daily_time_used)
+            study_duration = min(remaining[best_course], max_session_length)
             
+            if study_duration < 30:
+                break
+
             sessions.append({
                 'course': best_course,
                 'day': day_name,
