@@ -13,7 +13,7 @@ def time_to_minutes(time_str, period):
 
 def minutes_to_time(minutes):
     hours = minutes // 60
-    mins = int(round(minutes % 60 / 5) * 5) % 60
+    mins = minutes % 60
     suffix = "AM" if hours < 12 or hours == 24 else "PM"
     if hours > 12:
         hours -= 12
@@ -48,7 +48,7 @@ def available_study_times(combined_list, vals):
 
 
         for entry in entries:
-            if(time_studied < max_study and open_start < end_day - 30):
+            if(time_studied < max_study and open_start < end_day - 10):
                 try:
                     start_min = time_to_minutes(entry.start, entry.meridian)
                     end_min = time_to_minutes(entry.end, entry.meridian)
@@ -134,9 +134,10 @@ def schedule_study_sessions(combined_list,vals):
 
             for course_name, time_needed in course_study_times.items():
                 if time_needed > 0 and slot_duration >= 30:  # min 30 min blocks
-                    best_course = course_name
-                    best_time_needed = min(time_needed, slot_duration)
-                    break
+                    if time_needed > best_time_needed:
+                        best_course = course_name
+                        best_time_needed = min(time_needed, slot_duration)
+                    
 
             if best_course:
                 # Schedule this course for this time slot
