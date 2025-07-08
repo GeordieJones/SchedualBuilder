@@ -12,15 +12,20 @@ def time_to_minutes(time_str, period):
 
 
 def minutes_to_time(minutes):
+    # FIX: Handle day overflow correctly
+    if minutes >= 1440:  # 24 hours
+        minutes = minutes % 1440
+    
     hours = minutes // 60
     mins = minutes % 60
-    suffix = "AM" if hours < 12 or hours == 24 else "PM"
-    if hours > 12:
-        hours -= 12
     if hours == 0:
-        hours = 12
-    return f"{int(hours)}:{int(mins):02d} {suffix}"
-
+        return f"12:{mins:02d} AM"
+    elif hours < 12:
+        return f"{hours}:{mins:02d} AM"
+    elif hours == 12:
+        return f"12:{mins:02d} PM"
+    else:
+        return f"{hours-12}:{mins:02d} PM"
 TIME_BETWEEN = 5
 
 def available_study_times(combined_list, vals):
