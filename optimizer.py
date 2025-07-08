@@ -111,10 +111,18 @@ def schedule_study_sessions(combined_list,vals):
     free_time_slots = available_study_times(combined_list, vals)
     study_allocations = optimize_times(combined_list, vals)
 
-    course_study_times = {course_name: time for course_name, time in study_allocations}
+    num_days = len(free_time_slots)
+    daily_course_study_times = {}
+
+    for course_name, weekly_time in study_allocations:
+        daily_course_study_times[course_name] = weekly_time / num_days
+
+    
     scheduled_sessions = []
     for day_index, day_slots in enumerate(free_time_slots):
         day_name = combined_list[day_index].name
+
+        course_study_times = daily_course_study_times.copy()
 
         for start_str, end_str in day_slots:
             start_minutes = time_to_minutes(start_str.split()[0], start_str.split()[1])
@@ -128,6 +136,8 @@ def schedule_study_sessions(combined_list,vals):
                 if time_needed > 0 and slot_duration >= 30:  # min 30 min blocks
                     best_course = course_name
                     best_time_needed = min(time_needed, slot_duration)
+                    break
+
             if best_course:
                 # Schedule this course for this time slot
                 study_end_minutes = start_minutes + min(best_time_needed, slot_duration)
