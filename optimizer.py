@@ -63,6 +63,8 @@ def available_study_times(combined_list, vals):
     full_blocks = [[] for _ in range(7)]
     start_time = vals['start'][0]
     end_time = vals['end'][0]
+    start_mar = vals['start'][1]
+    end_mar = vals['end'][1]
     
     # If they're lists, take the first element
     if isinstance(start_time, list):
@@ -70,8 +72,8 @@ def available_study_times(combined_list, vals):
     if isinstance(end_time, list):
         end_time = end_time[0]
     
-    start_day = time_to_minutes(start_time, "am")
-    end_day = time_to_minutes(end_time, "pm")
+    start_day = time_to_minutes(start_time, start_mar)
+    end_day = time_to_minutes(end_time, end_mar)
     min_study = int((float(vals['min'])) * 60)
 
     for i, day in enumerate(combined_list):

@@ -238,13 +238,21 @@ def add_study(name, days, start, end, meridian):
 
 vals = {}
 def add_values(start_time, end_time, max_val, min_val):
-    vals['start'] = (start_time, 'AM')
-    vals['end'] = (end_time, 'PM')
+    start = extract_time_part(start_time)
+    end = extract_time_part(end_time)
+    start_mardian = extract_meridian(start_time)
+    end_mardian = extract_meridian(end_time)
+    vals['start'] = (start, start_mardian)
+    vals['end'] = (end, end_mardian)
     vals['max'] = max_val
     vals['min'] = min_val
 
 def extract_meridian(time_str):
     return time_str.split(" ")[-1]
+
+def extract_time_part(time_str):
+    return time_str.strip().split(" ")[0]
+
 
 
 def show_data(class_days):

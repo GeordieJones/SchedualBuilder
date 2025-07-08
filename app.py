@@ -168,14 +168,14 @@ class thirdWindow(QWidget):
         layout = QGridLayout()
 
         #classes enter
-        self.start = QLabel('Time willing to start (AM): ')
+        self.start = QLabel('Time willing to start: ')
         self.input_box1 = QLineEdit()
         self.input_box1.setMinimumWidth(300)
         layout.addWidget(self.start, 0, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.input_box1, 0, 1)
 
         #days enter
-        self.end = QLabel('Time willing to end (PM): ')
+        self.end = QLabel('Time willing to end: ')
         self.input_box2 = QLineEdit()
         layout.addWidget(self.end, 1, 0, alignment=Qt.AlignLeft)
         layout.addWidget(self.input_box2, 1, 1)
