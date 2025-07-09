@@ -22,7 +22,7 @@ class TimeSlot:
 @dataclass
 class Course:
     name: str
-    days: List[str]
+    day: List[str]
     time: TimeSlot
     difficulty: int
     #assignments: List['Assignment'] = None
@@ -31,7 +31,7 @@ class Course:
 @dataclass 
 class Activity:
     name: str
-    days: List[str]
+    day: List[str]
     time: TimeSlot
 
 @dataclass

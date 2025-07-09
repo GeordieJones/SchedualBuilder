@@ -118,7 +118,8 @@ def calculate_total_study_time(free_time_slots):
 def optimize_times(combined_list, vals):
     """Optimize study time allocation based on course difficulty"""
     free_time_slots = available_study_times(combined_list, vals)
-    
+    for i, blocks in enumerate(free_time_slots):
+        print(f"Day {i} free blocks: {blocks}")
     all_courses = []
     seen_names = set()
     for day in combined_list:
@@ -167,6 +168,10 @@ def schedule_study_sessions(combined_list,vals):
         
         day_sessions = schedule_daily(day_name, day_slots, daily_targets,max_daily_minutes,picker)
         scheduled_sessions.extend(day_sessions)
+
+    print(f"Scheduled sessions count: {len(scheduled_sessions)}")
+    for s in scheduled_sessions:
+            print(s)
     
     return scheduled_sessions
 
@@ -183,6 +188,8 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes,picke
         start_minutes = time_to_minutes(start_str.split()[0], start_str.split()[1])
         end_minutes = time_to_minutes(end_str.split()[0], end_str.split()[1])
         slot_duration = end_minutes - start_minutes
+
+        print(f"Time slot: {start_str} - {end_str}, duration: {slot_duration} mins")
 
         available_time = min(slot_duration, max_daily_minutes - daily_time_used)
         if available_time < 30:  # minimum 30 min blocks

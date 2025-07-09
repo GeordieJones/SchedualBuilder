@@ -4,7 +4,6 @@ from PySide6.QtCore import Qt
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QGridLayout,
                                 QPushButton, QLabel, QLineEdit, QTableWidget, QTableWidgetItem)
-from PySide6.QtCore import Qt, Signal
 
 from orgainzed_app.core.data import ScheduleManager
 from orgainzed_app.core.scheduler import optimize_schedule
@@ -259,13 +258,14 @@ class showData(QTableWidget):
         day_schedules = self.manager.day_schedules
 
         self.setRowCount(len(day_schedules))
-        self.setColumnCount(2)
-        self.setHorizontalHeaderLabels(['Day', 'Schedule'])
+        self.setColumnCount(5)
+        self.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes', 'Activities', 'Study'])
 
         for row, (day_key, schedule_obj) in enumerate(day_schedules.items()):
             # Day name
             self.setItem(row, 0, QTableWidgetItem(day_name_map.get(day_key, day_key.capitalize())))
-
+            items = self.manager.get_sorted_daily_items(day_key)
+            print(f"Day: {day_key}, Items: {items}")
             # Combined daily items (classes, activities, study sessions)
             schedule_text = "\n".join(self.manager.get_sorted_daily_items(day_key))
             self.setItem(row, 1, QTableWidgetItem(schedule_text))

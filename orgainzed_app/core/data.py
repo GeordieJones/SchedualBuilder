@@ -23,12 +23,12 @@ class ScheduleManager:
             }
             # Populate from all sources
             for course in self.courses:
-                for day in course.days:
+                for day in course.day:
                     if day in schedules:
                         schedules[day].courses.append(course)
             
             for activity in self.activities:
-                for day in activity.days:
+                for day in activity.day:
                     if day in schedules:
                         schedules[day].activities.append(activity)
             
@@ -57,10 +57,11 @@ class ScheduleManager:
         )
         self.courses.append(Course(
             name=course_data['name'],
-            days=course_data['days'],
+            day=course_data['days'],
             time=time_slot,
             difficulty=course_data['difficulty']
         ))
+        print('course added')
         self._invalidate_cache()
 
     def add_activity(self, activity_data: dict):
@@ -71,9 +72,10 @@ class ScheduleManager:
         )
         self.activities.append(Activity(
             name=activity_data['name'],
-            days=activity_data['days'],
+            day=activity_data['days'],
             time=time_slot,
         ))
+        print('activity added')
         self._invalidate_cache()
 
     def add_study(self, study_data: dict):
@@ -84,9 +86,10 @@ class ScheduleManager:
         )
         self.study_sessions.append(StudySession(
             course_name=study_data['name'],
-            days=study_data['days'][0],
+            day=study_data['days'][0],
             time=time_slot,
         ))
+        print('study added')
         self._invalidate_cache()
 
     def get_sorted_daily_items(self, day: str) -> List[str]:
