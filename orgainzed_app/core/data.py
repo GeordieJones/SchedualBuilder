@@ -83,7 +83,7 @@ class ScheduleManager:
             meridian=study_data['meridian']
         )
         self.study_sessions.append(StudySession(
-            name=study_data['name'],
+            course_name=study_data['name'],
             days=study_data['days'][0],
             time=time_slot,
         ))
@@ -101,7 +101,7 @@ class ScheduleManager:
                         for c in day_schedule.courses)
         all_items.extend((a.time.to_minutes(), f'Activity: {a.name} ({a.time.start}-{a.time.end} {a.time.meridian})') 
                         for a in day_schedule.activities)
-        all_items.extend((s.time.to_minutes(), f'Study: {s.name} ({s.time.start}-{s.time.end} {s.time.meridian})') 
+        all_items.extend((s.time.to_minutes(), f'Study: {s.course_name} ({s.time.start}-{s.time.end} {s.time.meridian})') 
                         for s in day_schedule.study_sessions)
         
         # Return sorted by time

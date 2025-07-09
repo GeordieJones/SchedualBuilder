@@ -80,12 +80,12 @@ def available_study_times(combined_list, vals):
         study_blocks = []
         open_start = start_day
 
-        entries = sorted(day.courses + day.activities, key=lambda x: time_to_minutes(x.start, x.meridian))
+        entries = sorted(day.courses + day.activities, key=lambda x: time_to_minutes(x.time.start, x.time.meridian))
 
         for entry in entries:
             try:
-                start_min = time_to_minutes(entry.start, entry.meridian)
-                end_min = time_to_minutes(entry.end, entry.meridian)
+                start_min = time_to_minutes(entry.time.start, entry.time.meridian)
+                end_min = time_to_minutes(entry.time.end, entry.time.meridian)
                 
                 # Check if there's a valid study block before this entry
                 available_time = start_min - TIME_BETWEEN - open_start
@@ -158,7 +158,8 @@ def schedule_study_sessions(combined_list,vals):
     picker = CoursePicker()
 
     for day_index, day_slots in enumerate(free_time_slots):
-        day_name = combined_list[day_index].name
+        day_schedule = combined_list[day_index]
+        day_name = day_schedule.day.name if hasattr(day_schedule.day, 'name') else day_schedule.day
         
         # Calculate daily targets (could be made more sophisticated)
         daily_targets = {course: weekly_time / num_days

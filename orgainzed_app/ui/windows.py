@@ -1,3 +1,6 @@
+from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
+                                QLineEdit, QGridLayout, QSizePolicy)
+from PySide6.QtCore import Qt
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QGridLayout,
                                 QPushButton, QLabel, QLineEdit, QTableWidget, QTableWidgetItem)
@@ -6,249 +9,274 @@ from PySide6.QtCore import Qt, Signal
 from orgainzed_app.core.data import ScheduleManager
 from orgainzed_app.core.scheduler import optimize_schedule
 
-class ClassInputWindow(QWidget):
-    submitted = Signal(dict)
-
-    def __init__(self):
+class firstWindow(QWidget):
+    def __init__(self, manager):
         super().__init__()
-        self.setWindowTitle("Class Input")
+        self.manager = manager
+        self.setWindowTitle("Class Schedule GUI")
         self.setGeometry(100, 100, 800, 600)
-        self.setup_ui()
 
-    def setup_ui(self):
         layout = QGridLayout()
-        # Class name
-        layout.addWidget(QLabel('Class:'), 0, 0)
-        self.input_name = QLineEdit()
-        self.input_name.setMinimumWidth(300)
-        layout.addWidget(self.input_name, 0, 1)
-        # Days
-        layout.addWidget(QLabel('Days (m t w th f):'), 1, 0)
-        self.input_days = QLineEdit()
-        layout.addWidget(self.input_days, 1, 1)
-        # Time
-        layout.addWidget(QLabel('Time (start-end AM/PM):'), 2, 0)
-        self.input_time = QLineEdit()
-        layout.addWidget(self.input_time, 2, 1)
-        # Difficulty
-        layout.addWidget(QLabel('Difficulty:'), 3, 0)
-        self.input_diff = QLineEdit()
-        layout.addWidget(self.input_diff, 3, 1)
-        # Buttons
-        self.submit_btn = QPushButton('Submit Class')
-        self.submit_btn.clicked.connect(self.process_input)
-        layout.addWidget(self.submit_btn, 4, 0)
-        self.next_btn = QPushButton('Next')
-        self.next_btn.clicked.connect(self.on_next)
-        layout.addWidget(self.next_btn, 4, 1)
+
+        #classes enter
+        self.label1 = QLabel('Class: ')
+        self.input_box1 = QLineEdit()
+        self.input_box1.setMinimumWidth(300)
+        layout.addWidget(self.label1, 0, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box1, 0, 1)
+
+        #days enter
+        self.label2 = QLabel('Days (m, t, w, th, f): ')
+        self.input_box2 = QLineEdit()
+        layout.addWidget(self.label2, 1, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box2, 1, 1)
+
+        #times enter
+        self.label3 = QLabel('time (start-finish AM/PM): ')
+        self.input_box3 = QLineEdit()
+        layout.addWidget(self.label3, 2, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box3, 2, 1)
+
+        self.label4 = QLabel('difficulty of class: ')
+        self.input_box4 = QLineEdit()
+        layout.addWidget(self.label4, 3, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box4, 3, 1)
+
+
+
+        self.submit_button = QPushButton("Submit class")
+        self.submit_button.setFixedSize(150, 40)
+        layout.addWidget(self.submit_button, 4, 0)
+        self.submit_button.clicked.connect(self.process_input)
+
+
+        self.next_button = QPushButton("Next page")
+        self.next_button.setFixedSize(150, 40)
+        layout.addWidget(self.next_button, 4, 2)
+        self.next_button.clicked.connect(self.next_page)
+
+
         self.setLayout(layout)
 
     def process_input(self):
         try:
-            name = self.input_name.text()
-            days = self.input_days.text().split()
-            time_str, mer = self.input_time.text().split()
-            start, end = time_str.split('-')
-            diff = int(self.input_diff.text())
-            data = {'name': name, 'days': days, 'start': start,
-                    'end': end, 'meridian': mer, 'difficulty': diff}
-            self.submitted.emit(data)
-            # clear
-            for w in [self.input_name, self.input_days, self.input_time, self.input_diff]:
-                w.clear()
-        except Exception as e:
-            print(f"Error processing class input: {e}")
-
-    def on_next(self):
-        self.close()
-        self.parent().show_activity_window()
-
-class ActivityInputWindow(QWidget):
-    submitted = Signal(dict)
-
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Activity Input")
-        self.setGeometry(100, 100, 800, 600)
-        self.setup_ui()
-
-    def setup_ui(self):
-        layout = QGridLayout()
-        layout.addWidget(QLabel('Activity:'), 0, 0)
-        self.input_name = QLineEdit(); self.input_name.setMinimumWidth(300)
-        layout.addWidget(self.input_name, 0, 1)
-        layout.addWidget(QLabel('Days (m t w th f):'), 1, 0)
-        self.input_days = QLineEdit()
-        layout.addWidget(self.input_days, 1, 1)
-        layout.addWidget(QLabel('Time (start-end AM/PM):'), 2, 0)
-        self.input_time = QLineEdit()
-        layout.addWidget(self.input_time, 2, 1)
-        self.submit_btn = QPushButton('Submit Activity')
-        self.submit_btn.clicked.connect(self.process_input)
-        layout.addWidget(self.submit_btn, 3, 0)
-        self.next_btn = QPushButton('Next')
-        self.next_btn.clicked.connect(self.on_next)
-        layout.addWidget(self.next_btn, 3, 1)
-        self.setLayout(layout)
-
-    def process_input(self):
-        try:
-            name = self.input_name.text()
-            days = self.input_days.text().split()
-            time_str, mer = self.input_time.text().split()
-            start, end = time_str.split('-')
-            data = {'name': name, 'days': days,
-                    'start': start, 'end': end, 'meridian': mer}
-            self.submitted.emit(data)
-            for w in [self.input_name, self.input_days, self.input_time]:
-                w.clear()
-        except Exception as e:
-            print(f"Error processing activity input: {e}")
-
-    def on_next(self):
-        self.close()
-        self.parent().show_prefs_window()
-
-class PreferencesWindow(QWidget):
-    submitted = Signal(dict)
-
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Preferences")
-        self.setGeometry(100, 100, 800, 600)
-        self.setup_ui()
-
-    def setup_ui(self):
-        layout = QGridLayout()
-        layout.addWidget(QLabel('Start willing to start:'), 0, 0)
-        self.input_start = QLineEdit(); self.input_start.setMinimumWidth(300)
-        layout.addWidget(self.input_start, 0, 1)
-        layout.addWidget(QLabel('End willing to end:'), 1, 0)
-        self.input_end = QLineEdit()
-        layout.addWidget(self.input_end, 1, 1)
-        layout.addWidget(QLabel('Max hours:'), 2, 0)
-        self.input_max = QLineEdit()
-        layout.addWidget(self.input_max, 2, 1)
-        layout.addWidget(QLabel('Min hours:'), 3, 0)
-        self.input_min = QLineEdit()
-        layout.addWidget(self.input_min, 3, 1)
-        self.submit_btn = QPushButton('Submit Preferences')
-        self.submit_btn.clicked.connect(self.process_input)
-        layout.addWidget(self.submit_btn, 4, 0)
-        self.finish_btn = QPushButton('Finish')
-        self.finish_btn.clicked.connect(self.on_finish)
-        layout.addWidget(self.finish_btn, 4, 1)
-        self.setLayout(layout)
-
-    def process_input(self):
-        try:
-            data = {
-                'start_time': self.input_start.text(),
-                'end_time': self.input_end.text(),
-                'max_hours': int(self.input_max.text()),
-                'min_hours': int(self.input_min.text())
+            course_data = {
+                'name': self.input_box1.text(),
+                'days': self.input_box2.text().split(),  # e.g., ['m', 'w', 'f']
+                'start': self.input_box3.text().split()[0].split('-')[0],  # e.g., '9'
+                'end': self.input_box3.text().split()[0].split('-')[1],    # e.g., '10'
+                'meridian': self.input_box3.text().split()[1],             # e.g., 'am'
+                'difficulty': int(self.input_box4.text())
             }
-            self.submitted.emit(data)
+
+            self.manager.add_course(course_data)
+
+            print(f"Class: {course_data['name']}")
+            print(f"Days: {course_data['days']}")
+            print(f"Time: {course_data['start']}-{course_data['end']} {course_data['meridian']}")
+            print(f"Diff: {course_data['difficulty']}")
+
+            self.input_box1.clear()
+            self.input_box2.clear()
+            self.input_box3.clear()
+            self.input_box4.clear()
+
         except Exception as e:
-            print(f"Error processing preferences: {e}")
+                print(f"Error: {e}")
 
-    def on_finish(self):
+    def next_page(self):
         self.close()
-        self.parent().show_schedule()
+        self.activity_window = secondWindow(self.manager)
+        self.activity_window.show()
 
-class ScheduleDisplayWindow(QWidget):
-    def __init__(self, schedule_data):
+class secondWindow(QWidget):
+    def __init__(self, manager):
         super().__init__()
-        self.schedule_data = schedule_data
-        self.setWindowTitle("Schedule Display")
+        self.manager = manager
+        self.setWindowTitle("Class Schedule GUI")
         self.setGeometry(100, 100, 800, 600)
-        self.setup_ui()
 
-    def setup_ui(self):
-        table = QTableWidget()
-        table.setRowCount(len(self.schedule_data))
-        table.setColumnCount(5)
-        table.setHorizontalHeaderLabels(['Day','Schedule','Classes','Activities','Study'])
-        name_map = {'m':'Monday','t':'Tuesday','w':'Wednesday','th':'Thursday','f':'Friday','sat':'Saturday','sun':'Sunday'}
-        # prepare combined function on manager
-        for i, day in enumerate(self.schedule_data):
-            day_name = name_map.get(day.name, day.name)
-            # classes
-            cls = '\n'.join(f"{c.name} ({c.time_range()})" for c in day.courses) or 'No classes'
-            acts = '\n'.join(f"{a.name} ({a.time_range()})" for a in day.activities) or 'No activities'
-            studs = '\n'.join(f"{s.name} ({s.time_range()})" for s in day.study_times) or 'No study sessions'
-            all_items = self.schedule_data.get_sorted_daily_items(day.name) or ['No items']
-            # set items
-            table.setItem(i,0,QTableWidgetItem(day_name))
-            table.setItem(i,1,QTableWidgetItem('\n'.join(all_items)))
-            table.setItem(i,2,QTableWidgetItem(cls))
-            table.setItem(i,3,QTableWidgetItem(acts))
-            table.setItem(i,4,QTableWidgetItem(studs))
-        table.resizeColumnsToContents(); table.resizeRowsToContents(); table.setWordWrap(True)
-        layout = QVBoxLayout(); layout.addWidget(table); self.setLayout(layout)
+        layout = QGridLayout()
 
-class MainWindow(QWidget):
-    def __init__(self):
+        self.label1 = QLabel('Activity: ')
+        self.input_box1 = QLineEdit()
+        self.input_box1.setMinimumWidth(300)
+        layout.addWidget(self.label1, 0, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box1, 0, 1)
+
+        self.label2 = QLabel('Days (m, t, w, th, f): ')
+        self.input_box2 = QLineEdit()
+        layout.addWidget(self.label2, 1, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box2, 1, 1)
+
+        self.label3 = QLabel('time (start-finish AM/PM): ')
+        self.input_box3 = QLineEdit()
+        layout.addWidget(self.label3, 2, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box3, 2, 1)
+
+
+
+        self.submit_button = QPushButton("Submit activity")
+        self.submit_button.setFixedSize(150, 40)
+        layout.addWidget(self.submit_button, 3, 0)
+        self.submit_button.clicked.connect(self.process_input)
+
+
+        self.finish_button = QPushButton("Next page")
+        self.finish_button.setFixedSize(150, 40)
+        layout.addWidget(self.finish_button, 3, 2)
+        self.finish_button.clicked.connect(self.next_page)
+
+
+        self.setLayout(layout)
+
+    def process_input(self):
+        try:
+            activity_data = {
+                'name': self.input_box1.text(),
+                'days': self.input_box2.text().split(),  # e.g., ['m', 'w', 'f']
+                'start': self.input_box3.text().split()[0].split('-')[0],  # e.g., '9'
+                'end': self.input_box3.text().split()[0].split('-')[1],    # e.g., '10'
+                'meridian': self.input_box3.text().split()[1],             # e.g., 'am'
+            }
+
+            self.manager.add_activity(activity_data)
+            print(f"Activity: {activity_data['name']}")
+            print(f"Days: {activity_data['days']}")
+            print(f"Time: {activity_data['start']}-{activity_data['end']} {activity_data['meridian']}")
+
+            self.input_box1.clear()
+            self.input_box2.clear()
+            self.input_box3.clear()
+
+        except Exception as e:
+                print(f"Error: {e}")
+
+    def next_page(self):
+        self.close()
+        self.activity_window = thirdWindow(self.manager)
+        self.activity_window.show()
+
+class thirdWindow(QWidget):
+    def __init__(self, manager):
         super().__init__()
-        self.manager = ScheduleManager()
-        self.setup_navigation()
+        self.manager = manager
+        self.setWindowTitle("Class Schedule GUI")
+        self.setGeometry(100, 100, 800, 600)
 
-    def setup_navigation(self):
-        # Initialize input windows without setting them as direct children
-        self.class_win = ClassInputWindow()
-        self.act_win = ActivityInputWindow()
-        self.pref_win = PreferencesWindow()
+        layout = QGridLayout()
 
-        # Connect navigation callbacks from buttons rather than relying on parent-child
-        self.class_win.submitted.connect(self.manager.add_course)
-        self.class_win.next_btn.clicked.connect(self.show_activity_window)
+        #classes enter
+        self.start = QLabel('Time willing to start: ')
+        self.input_box1 = QLineEdit()
+        self.input_box1.setMinimumWidth(300)
+        layout.addWidget(self.start, 0, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box1, 0, 1)
 
-        self.act_win.submitted.connect(self.manager.add_activity)
-        self.act_win.next_btn.clicked.connect(self.show_prefs_window)
+        #days enter
+        self.end = QLabel('Time willing to end: ')
+        self.input_box2 = QLineEdit()
+        layout.addWidget(self.end, 1, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box2, 1, 1)
 
-        self.pref_win.submitted.connect(self.manager.set_preferences)
-        self.pref_win.finish_btn.clicked.connect(self.show_schedule)
+        #times enter
+        self.max = QLabel('max hours: ')
+        self.input_box3 = QLineEdit()
+        layout.addWidget(self.max, 2, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box3, 2, 1)
 
-        # Show the first window
-        self.show_class_window()
-
-    def show_class_window(self):
-        # Ensure only the class window is visible
-        for w in (self.act_win, self.pref_win): w.hide()
-        self.class_win.show()
-
-    def show_activity_window(self):
-        # Hide others and show activity input
-        self.class_win.hide()
-        self.pref_win.hide()
-        self.act_win.show()
-
-    def show_prefs_window(self):
-        # Hide others and show preferences input
-        self.class_win.hide()
-        self.act_win.hide()
-        self.pref_win.show()
-
-    def show_schedule(self):
-        # Hide input windows and display final schedule
-        self.class_win.hide()
-        self.act_win.hide()
-        self.pref_win.hide()
-        sched = optimize_schedule(self.manager)
-        self.display = ScheduleDisplayWindow(sched)
-        self.display.show()
+        self.min = QLabel('min hours: ')
+        self.input_box4 = QLineEdit()
+        layout.addWidget(self.min, 3, 0, alignment=Qt.AlignLeft)
+        layout.addWidget(self.input_box4, 3, 1)
 
 
-    def show_class_window(self): self.class_win.show()
-    def show_activity_window(self): self.act_win.show()
-    def show_prefs_window(self): self.pref_win.show()
 
-    def show_schedule(self):
-        sched = optimize_schedule(self.manager)
-        self.display = ScheduleDisplayWindow(sched)
-        self.display.show()
+        self.submit_button = QPushButton("Submit hours")
+        self.submit_button.setFixedSize(150, 40)
+        layout.addWidget(self.submit_button, 4, 0)
+        self.submit_button.clicked.connect(self.process_input)
 
-if __name__ == '__main__':
+
+        self.finish_button = QPushButton("Finish")
+        self.finish_button.setFixedSize(150, 40)
+        layout.addWidget(self.finish_button, 4, 2)
+        self.finish_button.clicked.connect(self.finish)
+
+
+        self.setLayout(layout)
+
+    def process_input(self):
+        try:
+            value_data = {
+                'start': self.input_box1.text(),
+                'end': self.input_box2.text(),  # e.g., ['m', 'w', 'f']
+                'max': float(self.input_box3.text()),  # e.g., '9 AM'
+                'min': float(self.input_box4.text())    # e.g., '10 PM'
+            }
+
+            self.finish(value_data)
+
+        except Exception as e:
+                print(f"Error: {e}")
+
+    def finish(self,value_data):
+        self.input_box1.setDisabled(True)
+        self.input_box2.setDisabled(True)
+        self.input_box3.setDisabled(True)
+        self.submit_button.setDisabled(True)
+        self.finish_button.setDisabled(True)
+
+        self.close()
+
+        self.schedule_window = showData(self.manager, value_data)
+        self.schedule_window.show()
+
+
+class showData(QTableWidget):
+    def __init__(self, manager, value_data):
+        super().__init__()
+        self.manager = optimize_schedule(manager, value_data)  # Update manager with study sessions
+
+        self.setWindowTitle("Optimized Schedule")
+        self.setGeometry(100, 100, 800, 600)
+
+        layout = QVBoxLayout()
+        self.table = QTableWidget()
+        layout.addWidget(self.table)
+        self.setLayout(layout)
+
+        day_name_map = {
+            'm': 'Monday',
+            't': 'Tuesday',
+            'w': 'Wednesday',
+            'th': 'Thursday',
+            'f': 'Friday',
+            'sat': 'Saturday',
+            'sun': 'Sunday'
+        }
+
+        day_schedules = self.manager.day_schedules
+
+        self.setRowCount(len(day_schedules))
+        self.setColumnCount(2)
+        self.setHorizontalHeaderLabels(['Day', 'Schedule'])
+
+        for row, (day_key, schedule_obj) in enumerate(day_schedules.items()):
+            # Day name
+            self.setItem(row, 0, QTableWidgetItem(day_name_map.get(day_key, day_key.capitalize())))
+
+            # Combined daily items (classes, activities, study sessions)
+            schedule_text = "\n".join(self.manager.get_sorted_daily_items(day_key))
+            self.setItem(row, 1, QTableWidgetItem(schedule_text))
+
+        self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+
+
+def run():
     app = QApplication(sys.argv)
-    win = MainWindow()
+    manager = ScheduleManager()
+    window = firstWindow(manager)
+    window.show()
     sys.exit(app.exec())
