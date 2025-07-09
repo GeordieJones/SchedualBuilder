@@ -258,7 +258,7 @@ class ScheduleDisplayWindow(QWidget):
                 activity_str = '\n'.join(f'{a.name} ({a.time_range()})' for a in day.activities)
 
             # Combined Schedule column
-            combined_list = get_all_sorted_items(day)
+            combined_list = self.schedule_data.get_sorted_daily_items(day.name.lower())
             if not combined_list:
                 combined_list = ['No classes, activities, or study sessions']
 
