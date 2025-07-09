@@ -196,16 +196,6 @@ def convert_to_days(all_courses):
     return [week[day] for day in day_names]
 
 
-def ask_day(class_days):
-    """Asks for a day and prints the schedule for that day."""
-    requested_day = input("Which day do you want to see classes for (m, t, w, th, f, sat, sun)? ").strip().lower()
-    week_schedule = {day.name: day for day in class_days}
-
-    if requested_day in week_schedule:
-        print(week_schedule[requested_day])
-    else:
-        print("Invalid day. Try m, t, w, th, or f.")
-
 
 def add_class(name, days, start, end, meridian, difficulty):
     global all_courses

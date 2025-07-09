@@ -24,8 +24,8 @@ class Course:
     days: List[str]
     time: TimeSlot
     difficulty: int
-    assignments: List['Assignment'] = None
-    exams: List['Exam'] = None
+    #assignments: List['Assignment'] = None
+    #exams: List['Exam'] = None
 
 @dataclass 
 class Activity:
