@@ -1,4 +1,5 @@
-from .models import ScheduleManager, TimeSlot
+from .data   import ScheduleManager
+from .models import TimeSlot
 from .logic import schedule_study_sessions
 
 def optimize_schedule(manager: ScheduleManager, preferences: dict = None):
