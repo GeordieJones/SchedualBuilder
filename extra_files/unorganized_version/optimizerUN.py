@@ -1,4 +1,4 @@
-import main
+import mainUN
 import random
 
 class CoursePicker:
@@ -258,7 +258,7 @@ def optimize(combined_list, vals):
         start_parts = session['start'].split()
         end_parts = session['end'].split()
         
-        main.add_study(
+        mainUN.add_study(
             session['course'],
             [session['day']],
             start_parts[0],  # time part

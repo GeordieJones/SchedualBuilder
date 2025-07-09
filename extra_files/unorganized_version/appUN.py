@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, 
                                 QLineEdit, QGridLayout, QSizePolicy)
 from PySide6.QtCore import Qt
 import sys
-import main
+import mainUN
 
 '''
 
@@ -70,7 +70,7 @@ class firstWindow(QWidget):
             time_string, period = time_range.split()
             start, end = time_string.split('-')
 
-            main.add_class(class_name, days, start, end, period,diff)
+            mainUN.add_class(class_name, days, start, end, period,diff)
 
             print(f"Class: {class_name}")
             print(f"Days: {days}")
@@ -139,7 +139,7 @@ class secondWindow(QWidget):
             time_string, period = time_range.split()
             start, end = time_string.split('-')
 
-            main.add_activity(activity_name, days, start, end, period)
+            mainUN.add_activity(activity_name, days, start, end, period)
 
             print(f"Activity: {activity_name}")
             print(f"Days: {days}")
@@ -214,7 +214,7 @@ class thirdWindow(QWidget):
             max_val = int(self.input_box3.text())
             min_val = int(self.input_box4.text())
 
-            main.add_values(start, end, max_val, min_val)
+            mainUN.add_values(start, end, max_val, min_val)
 
             print(f"time: {start} - {end}")
             print(f"max: {max_val}")
@@ -237,7 +237,7 @@ class thirdWindow(QWidget):
 
         self.close()
 
-        self.schedule_window = main.show_data(main.class_days)
+        self.schedule_window = mainUN.show_data(mainUN.class_days)
         self.schedule_window.show()
 
 

@@ -14,7 +14,7 @@ TO DO:
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem)
-import optimizer
+import optimizerUN
 
 # === Data Classes ===
 
@@ -256,7 +256,7 @@ def extract_time_part(time_str):
 
 
 def show_data(class_days):
-    optimizer.optimize(class_days, vals)
+    optimizerUN.optimize(class_days, vals)
     for day in class_days:
         print(f"{day.name} has {len(day.study_times)} study sessions.")
 
