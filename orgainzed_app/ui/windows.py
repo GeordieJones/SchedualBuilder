@@ -1,8 +1,7 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QGridLayout, QPushButton, 
                                 QLabel, QLineEdit, QTableWidget, QTableWidgetItem)
 from PySide6.QtCore import Qt, Signal
-from core.data import ScheduleManager
-from orgainzed_app.core.data import optimize_schedule
+from ..core.data import ScheduleManager, optimize_schedule  # Relative import
 
 class ClassInputWindow(QWidget):
     submitted = Signal(dict)

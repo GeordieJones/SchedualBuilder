@@ -8,15 +8,15 @@ class TimeSlot:
     meridian: str
     
     def to_minutes(self):
+        time_str = self.start  # or self.end depending on what you need
         if ":" not in time_str:
-            time_str += ":00"  # auto-correct like "8" → "8:00"
+            time_str += ":00"
         hours, minutes = map(int, time_str.split(":"))
         if self.meridian.lower() == "pm" and hours != 12:
             hours += 12
         if self.meridian.lower() == "am" and hours == 12:
             hours = 0
         return hours * 60 + minutes
-        pass
 
 @dataclass
 class Course:

@@ -219,20 +219,3 @@ def schedule_daily(day_name, time_slots, course_targets, max_daily_minutes,picke
                 del remaining[best_course]
 
     return sessions
-
-
-
-def find_best_course_for_slot(targets, slot_duration):
-    if slot_duration < 30:
-        return None
-    valid_courses = {course: time for course, time in targets.items() if time > 0}
-    if not valid_courses:
-        return None
-
-    # Sort courses by remaining time descending
-    sorted_courses = sorted(valid_courses.items(), key=lambda x: x[1], reverse=True)
-
-    # Pick randomly from top N (e.g. top 3) to give smaller courses a chance
-    top_n = min(3, len(sorted_courses))
-    chosen_course = random.choice(sorted_courses[:top_n])[0]
-    return chosen_course
