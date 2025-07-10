@@ -232,7 +232,7 @@ class thirdWindow(QWidget):
         self.schedule_window.show()
 
 
-class showData(QTableWidget):
+class showData(QWidget):
     def __init__(self, manager, value_data):
         super().__init__()
         self.manager = optimize_schedule(manager, value_data)  # Update manager with study sessions
@@ -257,21 +257,57 @@ class showData(QTableWidget):
 
         day_schedules = self.manager.day_schedules
 
-        self.setRowCount(len(day_schedules))
-        self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes', 'Activities', 'Study'])
+        self.table.setRowCount(len(day_schedules))
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(['Day', 'Schedule', 'Classes', 'Activities', 'Study'])
+
+        def get_all_sorted_items(day_schedule):
+            all_items = []
+            all_items.extend((c.time.to_minutes(), f'Class: {c.name} ({c.time.start}-{c.time.end} {c.time.meridian})') 
+                            for c in day_schedule.courses)
+            all_items.extend((a.time.to_minutes(), f'Activity: {a.name} ({a.time.start}-{a.time.end} {a.time.meridian})') 
+                            for a in day_schedule.activities)
+            all_items.extend((s.time.to_minutes(), f'Study: {s.course_name} ({s.time.start}-{s.time.end} {s.time.meridian})') 
+                            for s in day_schedule.study_sessions)
+            return [item[1] for item in sorted(all_items, key=lambda x: x[0])]
 
         for row, (day_key, schedule_obj) in enumerate(day_schedules.items()):
             # Day name
-            self.setItem(row, 0, QTableWidgetItem(day_name_map.get(day_key, day_key.capitalize())))
-            items = self.manager.get_sorted_daily_items(day_key)
-            print(f"Day: {day_key}, Items: {items}")
-            # Combined daily items (classes, activities, study sessions)
-            schedule_text = "\n".join(self.manager.get_sorted_daily_items(day_key))
-            self.setItem(row, 1, QTableWidgetItem(schedule_text))
+            item_day = QTableWidgetItem(day_name_map.get(day_key, day_key.capitalize()))
+            item_day.setFlags(item_day.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, 0, item_day)
 
-        self.resizeColumnsToContents()
-        self.resizeRowsToContents()
+            # Combined schedule
+            schedule_text = "\n".join(get_all_sorted_items(schedule_obj)) or "No classes, activities, or study sessions"
+            item_schedule = QTableWidgetItem(schedule_text)
+            item_schedule.setTextAlignment(Qt.AlignTop)
+            item_schedule.setFlags(item_schedule.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, 1, item_schedule)
+
+            # Classes only
+            classes_str = "\n".join(f'{c.name} ({c.time.start}-{c.time.end} {c.time.meridian})' for c in schedule_obj.courses) or "No classes"
+            item_classes = QTableWidgetItem(classes_str)
+            item_classes.setTextAlignment(Qt.AlignTop)
+            item_classes.setFlags(item_classes.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, 2, item_classes)
+
+            # Activities only
+            activities_str = "\n".join(f'{a.name} ({a.time.start}-{a.time.end} {a.time.meridian})' for a in schedule_obj.activities) or "No activities"
+            item_activities = QTableWidgetItem(activities_str)
+            item_activities.setTextAlignment(Qt.AlignTop)
+            item_activities.setFlags(item_activities.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, 3, item_activities)
+
+            # Study sessions only
+            study_str = "\n".join(f'{s.course_name} ({s.time.start}-{s.time.end} {s.time.meridian})' for s in schedule_obj.study_sessions) or "No study sessions"
+            item_study = QTableWidgetItem(study_str)
+            item_study.setTextAlignment(Qt.AlignTop)
+            item_study.setFlags(item_study.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, 4, item_study)
+
+        self.table.setWordWrap(True)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
 
 
 def run():

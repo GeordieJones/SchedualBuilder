@@ -12,6 +12,12 @@ def optimize_schedule(manager: ScheduleManager, preferences: dict = None):
         'min': 1.0    # hours
     }
 
+    all_days = ['m', 't', 'w', 'th', 'f', 'sat', 'sun']
+    for day in all_days:
+        if day not in manager.day_schedules:
+            from .models import DaySchedule  # safe to import here
+            manager.day_schedules[day] = DaySchedule()
+            manager.day_schedules[day].day = day
     # 2. Get current schedule data from manager
     combined_list = list(manager.day_schedules.values())  # Get all DaySchedule objects
     
