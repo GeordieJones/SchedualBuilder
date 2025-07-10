@@ -235,6 +235,6 @@ def extract_meridian(time_str):
 def extract_time_part(time_str):
     return time_str.strip().split(" ")[0]
 
-def main():
-    global class_days
-    tb.show_data(class_days)
+def link_table():
+    global class_days, vals
+    return tb.show_data(class_days,vals)

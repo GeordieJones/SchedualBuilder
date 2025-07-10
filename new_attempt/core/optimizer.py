@@ -1,4 +1,4 @@
-import helpper_files
+from core import helpper_files
 import random
 
 class CoursePicker:

@@ -230,5 +230,11 @@ class thirdWindow(QWidget):
 
         self.close()
 
-        self.schedule_window = hf.link_table(hf.class_days)
+        self.schedule_window = hf.link_table()
         self.schedule_window.show()
+
+def run():
+    app = QApplication(sys.argv)
+    window = firstWindow()
+    window.show()
+    sys.exit(app.exec())
