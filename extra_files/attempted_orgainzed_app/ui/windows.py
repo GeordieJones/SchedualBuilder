@@ -5,8 +5,8 @@ import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QGridLayout,
                                 QPushButton, QLabel, QLineEdit, QTableWidget, QTableWidgetItem)
 
-from orgainzed_app.core.data import ScheduleManager
-from orgainzed_app.core.scheduler import optimize_schedule
+from attempted_orgainzed_app.core.data import ScheduleManager
+from attempted_orgainzed_app.core.scheduler import optimize_schedule
 
 class firstWindow(QWidget):
     def __init__(self, manager):
